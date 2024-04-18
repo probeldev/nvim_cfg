@@ -1,6 +1,22 @@
 call plug#begin()
 
 set mouse=a
+set number
+" set relativenumber
+
+" настройка отступов
+set tabstop=4
+set shiftwidth=4
+set list
+set listchars=tab:\|\—,trail:⋅,nbsp:⋅
+
+set smartindent
+" Копирует отступ от предыдущей строки
+set autoindent
+
+" Подсетка текущей строки
+set cursorline
+
 
 Plug 'preservim/nerdtree', { 'on': 'NERDTreeToggle' }
 "nnoremap <leader>n :NERDTreeFocus<CR>
