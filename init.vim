@@ -45,6 +45,11 @@ Plug 'nvim-telescope/telescope.nvim', { 'tag': '0.1.6' }
 
 "Plug 'xemptuous/sqlua.nvim' " Не разобрался посмотреть потом:)
 
+Plug 'tomtom/tcomment_vim'
+
+Plug 'akinsho/toggleterm.nvim', {'tag' : '*'}
+
+
 nnoremap <C-p> <cmd>Telescope find_files<cr>
 nnoremap <C-f> <cmd>Telescope live_grep<cr>
 
@@ -57,4 +62,6 @@ nnoremap <silent>    <A-.> <Cmd>BufferNext<CR>
 nnoremap <silent>    <A-c> <Cmd>BufferClose<CR>
 
 
+lua require("toggleterm").setup()
 
+nnoremap <C-t> <Cmd>ToggleTerm size=80 direction=float<CR>
