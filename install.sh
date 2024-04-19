@@ -9,3 +9,4 @@ sudo dpkg -i ripgrep_13.0.0_amd64.deb
 rm ripgrep_13.0.0_amd64.deb
 
 #:CocInstall coc-go
+#:CocInstall coc-db

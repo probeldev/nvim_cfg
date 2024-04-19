@@ -21,7 +21,7 @@ set cursorline
 Plug 'preservim/nerdtree', { 'on': 'NERDTreeToggle' }
 "nnoremap <leader>n :NERDTreeFocus<CR>
 "nnoremap <C-w> :NERDTree<CR>
-nnoremap <C-w> :NERDTreeToggle<CR>
+nnoremap <A-a> :NERDTreeToggle<CR>
 "nnoremap <C-f> :NERDTreeFind<CR>
 
 Plug 'nvim-treesitter/nvim-treesitter'
@@ -43,11 +43,17 @@ Plug 'ryanoasis/vim-devicons'
 Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-telescope/telescope.nvim', { 'tag': '0.1.6' }
 
-"Plug 'xemptuous/sqlua.nvim' " Не разобрался посмотреть потом:)
 
 Plug 'tomtom/tcomment_vim'
 
 Plug 'akinsho/toggleterm.nvim', {'tag' : '*'}
+
+Plug 'MunifTanjim/nui.nvim'
+Plug 'tpope/vim-dadbod'
+Plug 'kristijanhusak/vim-dadbod-ui'
+
+
+Plug 'Mofiqul/adwaita.nvim'
 
 
 nnoremap <C-p> <cmd>Telescope find_files<cr>
@@ -55,13 +61,23 @@ nnoremap <C-f> <cmd>Telescope live_grep<cr>
 
 call plug#end()
 
-colorscheme duskfox
+set background=light
+colorscheme adwaita
 
-nnoremap <silent>    <A-,> <Cmd>BufferPrevious<CR>
-nnoremap <silent>    <A-.> <Cmd>BufferNext<CR>
-nnoremap <silent>    <A-c> <Cmd>BufferClose<CR>
+
+nnoremap <silent>    <A-h> <Cmd>BufferPrevious<CR>
+nnoremap <silent>    <A-l> <Cmd>BufferNext<CR>
+nnoremap <silent>    <A-j> <Cmd>BufferClose<CR>
 
 
 lua require("toggleterm").setup()
+nnoremap <A-x> <Cmd>ToggleTerm size=80 direction=float<CR>
+nnoremap <A-s> <Cmd>ToggleTerm size=80 direction=vertical<CR>
+tnoremap <Esc> <C-\><C-n>
 
-nnoremap <C-t> <Cmd>ToggleTerm size=80 direction=float<CR>
+
+" Use ctrl-[hjkl] to select the active split!
+nmap <silent> <c-k> :wincmd k<CR>
+nmap <silent> <c-j> :wincmd j<CR>
+nmap <silent> <c-h> :wincmd h<CR>
+nmap <silent> <c-l> :wincmd l<CR>
