@@ -53,7 +53,7 @@ Plug 'tpope/vim-dadbod'
 Plug 'kristijanhusak/vim-dadbod-ui'
 
 
-Plug 'Mofiqul/adwaita.nvim'
+" Plug 'Mofiqul/adwaita.nvim'
 
 
 nnoremap <C-p> <cmd>Telescope find_files<cr>
@@ -61,8 +61,9 @@ nnoremap <C-f> <cmd>Telescope live_grep<cr>
 
 call plug#end()
 
-set background=light
-colorscheme adwaita
+" set background=light
+" colorscheme adwaita
+colorscheme duskfox
 
 
 nnoremap <silent>    <A-h> <Cmd>BufferPrevious<CR>
