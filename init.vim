@@ -55,6 +55,8 @@ Plug 'kristijanhusak/vim-dadbod-ui'
 
 " Plug 'Mofiqul/adwaita.nvim'
 
+Plug 'nvim-lua/plenary.nvim'
+Plug 'tanvirtin/vgit.nvim'
 
 nnoremap <C-p> <cmd>Telescope find_files<cr>
 nnoremap <C-f> <cmd>Telescope live_grep<cr>
@@ -82,3 +84,5 @@ nmap <silent> <c-k> :wincmd k<CR>
 nmap <silent> <c-j> :wincmd j<CR>
 nmap <silent> <c-h> :wincmd h<CR>
 nmap <silent> <c-l> :wincmd l<CR>
+
+lua require('vgit').setup()
