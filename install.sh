@@ -10,3 +10,5 @@ rm ripgrep_13.0.0_amd64.deb
 
 #:CocInstall coc-go
 #:CocInstall coc-db
+#:CocInstall coc-html
+#:CocInstall coc-tsserver
