@@ -63,6 +63,8 @@ Plug 'nvim-lualine/lualine.nvim'
 Plug 'nvim-tree/nvim-web-devicons'
 
 
+Plug 'aveplen/ruscmd.nvim'
+
 nnoremap <C-p> <cmd>Telescope find_files<cr>
 nnoremap <C-f> <cmd>Telescope live_grep<cr>
 
@@ -92,3 +94,7 @@ nmap <silent> <c-l> :wincmd l<CR>
 
 lua require('vgit').setup()
 lua require('lualine').setup()
+
+lua << EOF
+require('ruscmd').setup{}
+EOF
