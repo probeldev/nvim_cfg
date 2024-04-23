@@ -65,6 +65,9 @@ Plug 'nvim-tree/nvim-web-devicons'
 
 Plug 'aveplen/ruscmd.nvim'
 
+Plug 'stevearc/conform.nvim'
+
+
 nnoremap <C-p> <cmd>Telescope find_files<cr>
 nnoremap <C-f> <cmd>Telescope live_grep<cr>
 
@@ -97,4 +100,18 @@ lua require('lualine').setup()
 
 lua << EOF
 require('ruscmd').setup{}
+EOF
+
+lua << EOF
+require("conform").setup({
+	formatters_by_ft = {
+    -- Use a sub-list to run only the first available formatter
+    javascript = { { "prettierd", "prettier" } },
+  },
+   format_on_save = {
+    -- These options will be passed to conform.format()
+    timeout_ms = 500,
+    lsp_fallback = true,
+  },
+})
 EOF
