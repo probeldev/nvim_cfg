@@ -5,14 +5,14 @@ set number
 " set relativenumber
 
 " настройка отступов
-set tabstop=4
-set shiftwidth=4
-set list
-set listchars=tab:\|\—,trail:⋅,nbsp:⋅
+" set tabstop=4
+" set shiftwidth=4
+" set list
+" set listchars=tab:\|\—,trail:⋅,nbsp:⋅
 
-set smartindent
+" set smartindent
 " Копирует отступ от предыдущей строки
-set autoindent
+" set autoindent
 
 " Подсетка текущей строки
 set cursorline
@@ -67,6 +67,8 @@ Plug 'aveplen/ruscmd.nvim'
 
 Plug 'stevearc/conform.nvim'
 
+Plug 'projekt0n/github-nvim-theme'
+
 
 nnoremap <C-p> <cmd>Telescope find_files<cr>
 nnoremap <C-f> <cmd>Telescope live_grep<cr>
@@ -75,7 +77,7 @@ call plug#end()
 
 " set background=light
 " colorscheme adwaita
-colorscheme duskfox
+colorscheme github_light  
 
 
 nnoremap <silent>    <A-h> <Cmd>BufferPrevious<CR>
@@ -107,6 +109,8 @@ require("conform").setup({
 	formatters_by_ft = {
     -- Use a sub-list to run only the first available formatter
     javascript = { { "prettierd", "prettier" } },
+    html = { { "prettierd", "prettier" } },
+    css = { { "prettierd", "prettier" } },
   },
    format_on_save = {
     -- These options will be passed to conform.format()
