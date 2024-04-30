@@ -17,6 +17,9 @@ set number
 " Подсетка текущей строки
 set cursorline
 
+" Буфур обмена
+set clipboard=unnamedplus
+
 
 Plug 'preservim/nerdtree', { 'on': 'NERDTreeToggle' }
 "nnoremap <leader>n :NERDTreeFocus<CR>
