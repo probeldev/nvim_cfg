@@ -72,7 +72,7 @@ Plug 'aveplen/ruscmd.nvim'
 Plug 'stevearc/conform.nvim'
 
 Plug 'projekt0n/github-nvim-theme'
-
+Plug 'dstein64/nvim-scrollview'
 
 " multicursor
 
