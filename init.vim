@@ -20,12 +20,13 @@ set cursorline
 " Буфур обмена
 set clipboard=unnamedplus
 
+Plug 'nvim-neo-tree/neo-tree.nvim'
+Plug 'nvim-lua/plenary.nvim'
+Plug 'nvim-tree/nvim-web-devicons'
+Plug 'MunifTanjim/nui.nvim'
 
-Plug 'preservim/nerdtree', { 'on': 'NERDTreeToggle' }
-"nnoremap <leader>n :NERDTreeFocus<CR>
-"nnoremap <C-w> :NERDTree<CR>
-nnoremap <A-a> :NERDTreeToggle<CR>
-"nnoremap <C-f> :NERDTreeFind<CR>
+nnoremap <A-a> :Neotree<CR>
+
 
 Plug 'nvim-treesitter/nvim-treesitter'
 Plug 'EdenEast/nightfox.nvim'
@@ -71,6 +72,9 @@ Plug 'aveplen/ruscmd.nvim'
 Plug 'stevearc/conform.nvim'
 
 Plug 'projekt0n/github-nvim-theme'
+
+
+" multicursor
 
 
 nnoremap <C-p> <cmd>Telescope find_files<cr>
@@ -122,3 +126,4 @@ require("conform").setup({
   },
 })
 EOF
+
