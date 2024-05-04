@@ -91,6 +91,11 @@ nnoremap <silent>    <A-h> <Cmd>BufferPrevious<CR>
 nnoremap <silent>    <A-l> <Cmd>BufferNext<CR>
 nnoremap <silent>    <A-j> <Cmd>BufferClose<CR>
 
+nmap <silent> gd <Plug>(coc-definition)
+nmap <silent> gr <Plug>(coc-references)
+
+" Symbol renaming
+nmap <A-r> <Plug>(coc-rename)
 
 lua require("toggleterm").setup()
 nnoremap <A-x> <Cmd>ToggleTerm size=80 direction=float<CR>

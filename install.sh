@@ -10,7 +10,8 @@ cp init.vim ~/.config/nvim/init.vim
 #rm ripgrep_13.0.0_amd64.deb
 
 brew install ripgrep
-nvim +PlugInstall +CocInstall coc-go +CocInstall coc-db +CocInstall coc-html +CocInstall coc-tsserver
+nvim +PlugInstall +CocInstall coc-go +CocInstall coc-db +CocInstall coc-html +CocInstall coc-tsserver +CocInstall coc-json
+
 
 npm install -g prettier
 npm install -g @fsouza/prettierd
