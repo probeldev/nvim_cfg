@@ -1,5 +1,5 @@
 curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
-    https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+	https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 cp init.vim ~/.config/nvim/init.vim
 
 #curl -sL install-node.vercel.app/lts | sudo bash
@@ -12,6 +12,7 @@ cp init.vim ~/.config/nvim/init.vim
 brew install ripgrep
 nvim +PlugInstall +CocInstall coc-go +CocInstall coc-db +CocInstall coc-html +CocInstall coc-tsserver +CocInstall coc-json
 
-
 npm install -g prettier
 npm install -g @fsouza/prettierd
+
+sudo apt install -g shfmt

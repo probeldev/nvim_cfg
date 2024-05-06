@@ -80,11 +80,12 @@ Plug 'dstein64/nvim-scrollview'
 nnoremap <C-p> <cmd>Telescope find_files<cr>
 nnoremap <C-f> <cmd>Telescope live_grep<cr>
 
+
 call plug#end()
 
 " set background=light
 " colorscheme adwaita
-colorscheme github_light  
+colorscheme github_light
 
 
 nnoremap <silent>    <A-h> <Cmd>BufferPrevious<CR>
@@ -123,6 +124,7 @@ require("conform").setup({
     javascript = { { "prettierd", "prettier" } },
     html = { { "prettierd", "prettier" } },
     css = { { "prettierd", "prettier" } },
+    sh = { "shfmt" }
   },
    format_on_save = {
     -- These options will be passed to conform.format()
