@@ -74,7 +74,9 @@ Plug 'stevearc/conform.nvim'
 Plug 'projekt0n/github-nvim-theme'
 Plug 'dstein64/nvim-scrollview'
 
-" multicursor
+" barbecue
+Plug 'SmiteshP/nvim-navic',
+Plug 'utilyre/barbecue.nvim',
 
 
 nnoremap <C-p> <cmd>Telescope find_files<cr>
@@ -134,3 +136,6 @@ require("conform").setup({
 })
 EOF
 
+lua << EOF 
+require("barbecue").setup()
+EOF
