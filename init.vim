@@ -1,14 +1,16 @@
 call plug#begin()
+" документация по наведению мыши
+Plug 'lewis6991/hover.nvim',
 
 set mouse=a
 set number
 " set relativenumber
 
 " настройка отступов
-" set tabstop=4
-" set shiftwidth=4
-" set list
-" set listchars=tab:\|\—,trail:⋅,nbsp:⋅
+set tabstop=4
+set shiftwidth=4
+set list
+set listchars=tab:\|\—,trail:⋅,nbsp:⋅
 
 " set smartindent
 " Копирует отступ от предыдущей строки
@@ -79,6 +81,9 @@ Plug 'SmiteshP/nvim-navic',
 Plug 'utilyre/barbecue.nvim',
 
 
+
+
+
 nnoremap <C-p> <cmd>Telescope find_files<cr>
 nnoremap <C-f> <cmd>Telescope live_grep<cr>
 
@@ -139,3 +144,22 @@ EOF
 lua << EOF 
 require("barbecue").setup()
 EOF
+
+lua << EOF 
+require("barbar").setup({
+ sidebar_filetypes = {
+    -- Use the default values: {event = 'BufWinLeave', text = '', align = 'left'}
+    NvimTree = true,
+    -- Or, specify the text used for the offset:
+    undotree = {
+      text = 'undotree',
+      align = 'center', -- *optionally* specify an alignment (either 'left', 'center', or 'right')
+    },
+    -- Or, specify the event which the sidebar executes when leaving:
+    ['neo-tree'] = {event = 'BufWipeout'},
+    -- Or, specify all three
+    Outline = {event = 'BufWinLeave', text = 'symbols-outline', align = 'right'},
+  },
+})
+EOF
+
