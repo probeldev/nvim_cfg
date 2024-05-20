@@ -104,6 +104,7 @@ nmap <silent> gr <Plug>(coc-references)
 
 " Symbol renaming
 nmap <A-r> <Plug>(coc-rename)
+nmap <A-e> :CocList diagnostics<CR>
 
 lua require("toggleterm").setup()
 nnoremap <A-x> <Cmd>ToggleTerm size=80 direction=float<CR>
