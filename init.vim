@@ -60,7 +60,7 @@ Plug 'kristijanhusak/vim-dadbod-ui'
 
 Plug 'nvim-lua/plenary.nvim'
 Plug 'tanvirtin/vgit.nvim'
-
+Plug 'sindrets/diffview.nvim'
 
 Plug 'nvim-lualine/lualine.nvim'
 " If you want to have icons in your statusline choose one of these
@@ -71,7 +71,9 @@ Plug 'aveplen/ruscmd.nvim'
 
 Plug 'stevearc/conform.nvim'
 
+" theme
 Plug 'projekt0n/github-nvim-theme'
+
 Plug 'dstein64/nvim-scrollview'
 
 " barbecue
@@ -90,7 +92,7 @@ nnoremap <C-f> <cmd>Telescope live_grep<cr>
 
 call plug#end()
 
-" set background=light
+set background=light
 " colorscheme adwaita
 colorscheme github_light
 
@@ -111,6 +113,7 @@ nnoremap <A-x> <Cmd>ToggleTerm size=80 direction=float<CR>
 nnoremap <A-s> <Cmd>ToggleTerm size=80 direction=vertical<CR>
 tnoremap <Esc> <C-\><C-n>
 
+nmap <A-d> :DiffviewOpen<CR>
 
 " Use ctrl-[hjkl] to select the active split!
 nmap <silent> <c-k> :wincmd k<CR>
