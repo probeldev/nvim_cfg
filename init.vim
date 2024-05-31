@@ -1,6 +1,4 @@
 call plug#begin()
-" документация по наведению мыши
-Plug 'lewis6991/hover.nvim',
 
 set mouse=a
 set number
