@@ -204,5 +204,7 @@ lua << EOF
 EOF
 
 lua << EOF 
-require("which-key").setup()
+require("which-key").setup({
+  ignore_missing = true, -- enable this to hide mappings for which you didn't specify a label
+})
 EOF
