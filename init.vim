@@ -84,6 +84,8 @@ Plug 'utilyre/barbecue.nvim'
 Plug 'sontungexpt/stcursorword'
 
 
+Plug 'folke/which-key.nvim'
+
 nnoremap <C-p> <cmd>Telescope find_files<cr>
 nnoremap <C-f> <cmd>Telescope live_grep<cr>
 
@@ -199,4 +201,8 @@ lua << EOF
             bg = nil,
         },
     })
+EOF
+
+lua << EOF 
+require("which-key").setup()
 EOF
