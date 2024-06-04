@@ -20,12 +20,13 @@ set cursorline
 " Буфур обмена
 set clipboard=unnamedplus
 
-Plug 'nvim-neo-tree/neo-tree.nvim'
+Plug 'nvim-tree/nvim-tree.lua'
+
 Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-tree/nvim-web-devicons'
 Plug 'MunifTanjim/nui.nvim'
 
-nnoremap <A-a> :Neotree<CR>
+nnoremap <A-a> :NvimTreeToggle<CR>
 
 
 Plug 'nvim-treesitter/nvim-treesitter'
@@ -34,8 +35,11 @@ Plug 'EdenEast/nightfox.nvim'
 
 Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
+
+
 inoremap <silent><expr> <cr> coc#pum#visible() && coc#pum#info()['index'] != -1 ? coc#pum#confirm() :
         \ "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
+
 
 Plug 'nvim-tree/nvim-web-devicons' " OPTIONAL: for file icons
 Plug 'lewis6991/gitsigns.nvim' " OPTIONAL: for git status
@@ -85,6 +89,7 @@ Plug 'sontungexpt/stcursorword'
 
 
 Plug 'folke/which-key.nvim'
+
 
 nnoremap <C-p> <cmd>Telescope find_files<cr>
 nnoremap <C-f> <cmd>Telescope live_grep<cr>
@@ -207,5 +212,14 @@ EOF
 lua << EOF 
 require("which-key").setup({
   ignore_missing = true, -- enable this to hide mappings for which you didn't specify a label
+})
+EOF
+
+lua << EOF 
+require("nvim-tree").setup({
+diagnostics = {
+      enable = true,
+      show_on_dirs = true,
+    }, 
 })
 EOF
