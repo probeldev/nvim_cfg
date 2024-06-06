@@ -223,3 +223,7 @@ diagnostics = {
     }, 
 })
 EOF
+
+" переход в начало / в конец строки
+noremap <C-a> ^
+noremap <C-e> $
