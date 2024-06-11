@@ -93,7 +93,6 @@ Plug 'sontungexpt/stcursorword'
 
 Plug 'folke/which-key.nvim'
 
-
 nnoremap <C-p> <cmd>Telescope find_files<cr>
 nnoremap <C-f> <cmd>Telescope live_grep<cr>
 
@@ -233,6 +232,7 @@ EOF
 lua << EOF 
 	require("structrue-go").setup()
 EOF
+
 
 " переход в начало / в конец строки
 noremap <C-a> ^
