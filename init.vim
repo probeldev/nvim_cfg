@@ -20,6 +20,7 @@ set cursorline
 " Буфур обмена
 set clipboard=unnamedplus
 
+
 Plug 'nvim-tree/nvim-tree.lua'
 
 Plug 'nvim-lua/plenary.nvim'
@@ -34,6 +35,8 @@ Plug 'EdenEast/nightfox.nvim'
 
 
 Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
+Plug 'crusj/structrue-go.nvim'
+
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
 
@@ -120,11 +123,14 @@ tnoremap <Esc> <C-\><C-n>
 
 nmap <A-d> :DiffviewOpen<CR>
 
-" Use ctrl-[hjkl] to select the active split!
-nmap <silent> <c-k> :wincmd k<CR>
-nmap <silent> <c-j> :wincmd j<CR>
-nmap <silent> <c-h> :wincmd h<CR>
-nmap <silent> <c-l> :wincmd l<CR>
+nmap <A-g> :lua require'structrue-go'.toggle()<CR>
+
+
+" " Use ctrl-[hjkl] to select the active split!
+" nmap <silent> <c-k> :wincmd k<CR>
+" nmap <silent> <c-j> :wincmd j<CR>
+" nmap <silent> <c-h> :wincmd h<CR>
+" nmap <silent> <c-l> :wincmd l<CR>
 
 lua require('vgit').setup()
 lua require('lualine').setup()
@@ -222,6 +228,10 @@ diagnostics = {
       show_on_dirs = true,
     }, 
 })
+EOF
+
+lua << EOF 
+	require("structrue-go").setup()
 EOF
 
 " переход в начало / в конец строки
