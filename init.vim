@@ -105,6 +105,8 @@ Plug 'sontungexpt/stcursorword'
 
 Plug 'folke/which-key.nvim'
 
+
+
 nnoremap <C-p> <cmd>Telescope find_files<cr>
 nnoremap <C-f> <cmd>Telescope live_grep<cr>
 
@@ -365,7 +367,7 @@ require'lspconfig'.stylelint_lsp.setup{
 
 -- Use a loop to conveniently call 'setup' on multiple servers and
 -- map buffer local keybindings when the language server attaches
-local servers = { 'gopls', 'vtsls' }
+local servers = { 'gopls', 'vtsls', 'intelephense' }
 for _, lsp in ipairs(servers) do
   nvim_lsp[lsp].setup {
     on_attach = on_attach,
