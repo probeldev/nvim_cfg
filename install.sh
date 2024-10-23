@@ -1,5 +1,6 @@
-curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
-	https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+sh -c 'curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/plug.vim --create-dirs \
+       https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
+
 mkdir ~/.config/nvim
 cp init.vim ~/.config/nvim/init.vim
 
@@ -10,10 +11,13 @@ cp init.vim ~/.config/nvim/init.vim
 #sudo dpkg -i ripgrep_13.0.0_amd64.deb
 #rm ripgrep_13.0.0_amd64.deb
 
-brew install ripgrep
-nvim +PlugInstall +CocInstall coc-go +CocInstall coc-db +CocInstall coc-html +CocInstall coc-tsserver +CocInstall coc-json +CocInstall coc-phpls
+brew install ripgrep || sudo apt install ripgrep
+#nvim +PlugInstall +CocInstall coc-go +CocInstall coc-db +CocInstall coc-html +CocInstall coc-tsserver +CocInstall coc-json +CocInstall coc-phpls
 
-npm install -g prettier
-npm install -g @fsouza/prettierd
+nvim +PlugInstall
 
-sudo apt install -g shfmt
+sudo apt install npm
+sudo npm install -g prettier
+sudo npm install -g @fsouza/prettierd
+
+sudo apt install shfmt
