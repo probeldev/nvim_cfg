@@ -107,7 +107,13 @@ Plug 'folke/which-key.nvim'
 
 
 Plug 'David-Kunz/gen.nvim'
+
+
 Plug 'kdheepak/lazygit.nvim'
+
+Plug 'karb94/neoscroll.nvim'
+
+
 
 nnoremap <C-p> <cmd>Telescope find_files<cr>
 nnoremap <C-f> <cmd>Telescope live_grep<cr>
@@ -395,3 +401,6 @@ require'nvim-treesitter.configs'.setup {
 }
 EOF
 
+lua << EOF
+	require('neoscroll').setup({ mappings = {'<C-u>', '<C-d>', '<C-b>', '<C-f>'} })
+EOF
