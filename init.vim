@@ -35,7 +35,7 @@ Plug 'EdenEast/nightfox.nvim'
 
 
 Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
-Plug 'crusj/structrue-go.nvim'
+" Plug 'crusj/structrue-go.nvim'
 
 " Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
@@ -79,7 +79,7 @@ Plug 'kristijanhusak/vim-dadbod-ui'
 
 Plug 'nvim-lua/plenary.nvim'
 Plug 'tanvirtin/vgit.nvim'
-Plug 'sindrets/diffview.nvim'
+" Plug 'sindrets/diffview.nvim'
 
 Plug 'nvim-lualine/lualine.nvim'
 " If you want to have icons in your statusline choose one of these
@@ -115,6 +115,7 @@ Plug 'karb94/neoscroll.nvim'
 
 
 
+
 nnoremap <C-p> <cmd>Telescope find_files<cr>
 nnoremap <C-f> <cmd>Telescope live_grep<cr>
 
@@ -139,12 +140,12 @@ nnoremap <silent>    <A-j> <Cmd>BufferClose<CR>
 
 lua require("toggleterm").setup()
 nnoremap <A-x> <Cmd>ToggleTerm size=80 direction=float<CR>
-nnoremap <A-s> <Cmd>ToggleTerm size=80 direction=vertical<CR>
+nnoremap <A-s> <Cmd>ToggleTerm size=10 direction=horizontal<CR>
 tnoremap <Esc> <C-\><C-n>
 
-nmap <A-d> :DiffviewOpen<CR>
-
-nmap <A-g> :lua require'structrue-go'.toggle()<CR>
+" nmap <A-d> :DiffviewOpen<CR>
+"
+" nmap <A-g> :lua require'structrue-go'.toggle()<CR>
 
 
 " " Use ctrl-[hjkl] to select the active split!
@@ -251,9 +252,6 @@ diagnostics = {
 })
 EOF
 
-lua << EOF 
-	require("structrue-go").setup()
-EOF
 
 
 " переход в начало / в конец строки
@@ -384,6 +382,7 @@ for _, lsp in ipairs(servers) do
     }
   }
 end
+
 EOF
 
 lua << EOF
@@ -404,3 +403,4 @@ EOF
 lua << EOF
 	require('neoscroll').setup({ mappings = {'<C-u>', '<C-d>', '<C-b>', '<C-f>'} })
 EOF
+
