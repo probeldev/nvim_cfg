@@ -27,7 +27,7 @@ Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-tree/nvim-web-devicons'
 Plug 'MunifTanjim/nui.nvim'
 
-nnoremap <A-a> :NvimTreeToggle<CR>
+nnoremap <space>a :NvimTreeToggle<CR>
 
 
 Plug 'nvim-treesitter/nvim-treesitter'
@@ -86,7 +86,6 @@ Plug 'nvim-lualine/lualine.nvim'
 Plug 'nvim-tree/nvim-web-devicons'
 
 
-Plug 'aveplen/ruscmd.nvim'
 
 Plug 'stevearc/conform.nvim'
 
@@ -116,8 +115,8 @@ Plug 'karb94/neoscroll.nvim'
 
 
 
-nnoremap ff <cmd>Telescope find_files<cr>
-nnoremap fg <cmd>Telescope live_grep<cr>
+nnoremap <space>f <cmd>Telescope find_files<cr>
+nnoremap <space>g <cmd>Telescope live_grep<cr>
 
 
 call plug#end()
@@ -139,8 +138,8 @@ nnoremap <silent>    <A-j> <Cmd>BufferClose<CR>
 " nmap <A-e> :CocList diagnostics<CR>
 
 lua require("toggleterm").setup()
-nnoremap <A-x> <Cmd>ToggleTerm size=80 direction=float<CR>
-nnoremap <A-s> <Cmd>ToggleTerm size=10 direction=horizontal<CR>
+nnoremap <space>x <Cmd>ToggleTerm size=80 direction=float<CR>
+nnoremap <space>s <Cmd>ToggleTerm size=10 direction=horizontal<CR>
 tnoremap <Esc> <C-\><C-n>
 
 " nmap <A-d> :DiffviewOpen<CR>
@@ -157,9 +156,6 @@ tnoremap <Esc> <C-\><C-n>
 lua require('vgit').setup()
 lua require('lualine').setup()
 
-lua << EOF
-require('ruscmd').setup{}
-EOF
 
 lua << EOF
 require("conform").setup({
