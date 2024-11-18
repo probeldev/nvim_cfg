@@ -116,8 +116,8 @@ Plug 'karb94/neoscroll.nvim'
 
 
 
-nnoremap <C-p> <cmd>Telescope find_files<cr>
-nnoremap <C-f> <cmd>Telescope live_grep<cr>
+nnoremap ff <cmd>Telescope find_files<cr>
+nnoremap fg <cmd>Telescope live_grep<cr>
 
 
 call plug#end()
