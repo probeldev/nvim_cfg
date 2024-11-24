@@ -29,6 +29,7 @@ Plug 'MunifTanjim/nui.nvim'
 
 nnoremap <space>a :NvimTreeToggle<CR>
 nnoremap <space>g :LazyGit<CR>
+nnoremap <space>c :lua require('lazyclip').show_clipboard()<CR>
 
 
 Plug 'nvim-treesitter/nvim-treesitter'
@@ -103,8 +104,6 @@ Plug 'utilyre/barbecue.nvim'
 Plug 'sontungexpt/stcursorword'
 
 
-Plug 'folke/which-key.nvim'
-
 
 Plug 'David-Kunz/gen.nvim'
 
@@ -114,6 +113,7 @@ Plug 'kdheepak/lazygit.nvim'
 Plug 'karb94/neoscroll.nvim'
 
 
+Plug 'atiladefreitas/lazyclip'
 
 
 nnoremap <space>p <cmd>Telescope find_files<cr>
@@ -234,11 +234,6 @@ lua << EOF
     })
 EOF
 
-lua << EOF 
-require("which-key").setup({
-  ignore_missing = true, -- enable this to hide mappings for which you didn't specify a label
-})
-EOF
 
 lua << EOF 
 require("nvim-tree").setup({
@@ -401,3 +396,6 @@ lua << EOF
 	require('neoscroll').setup({ mappings = {'<C-u>', '<C-d>', '<C-b>', '<C-f>'} })
 EOF
 
+lua << EOF
+	require("lazyclip").setup()
+EOF
