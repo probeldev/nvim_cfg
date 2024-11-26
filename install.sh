@@ -4,6 +4,9 @@ sh -c 'curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/plug.
 mkdir ~/.config/nvim
 cp init.vim ~/.config/nvim/init.vim
 
+rm -r ~/.config/nvim/snippets
+cp -r snippets ~/.config/nvim/snippets
+
 #curl -sL install-node.vercel.app/lts | sudo bash
 
 # todo: change

@@ -115,6 +115,9 @@ Plug 'karb94/neoscroll.nvim'
 
 Plug 'atiladefreitas/lazyclip'
 
+Plug 'dcampos/nvim-snippy'
+
+
 
 nnoremap <space>p <cmd>Telescope find_files<cr>
 nnoremap <space>f <cmd>Telescope live_grep<cr>
@@ -398,4 +401,18 @@ EOF
 
 lua << EOF
 	require("lazyclip").setup()
+EOF
+
+lua << EOF
+	require('snippy').setup({
+		mappings = {
+			is = {
+				['<Tab>'] = 'expand_or_advance',
+				['<S-Tab>'] = 'previous',
+			},
+			nx = {
+				['<leader>x'] = 'cut_text',
+			},
+		},
+	})
 EOF
