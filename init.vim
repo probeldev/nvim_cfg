@@ -166,8 +166,8 @@ require("conform").setup({
 	formatters_by_ft = {
     -- Use a sub-list to run only the first available formatter
 	-- javascript = { "prettierd", "prettier", stop_after_first = true },
-    html = {"prettierd", "prettier" },
-    css = {"prettierd", "prettier"},
+    -- html = {"prettierd", "prettier" },
+    -- css = {"prettierd", "prettier"},
     sh = { "shfmt" }
   },
    format_on_save = {
