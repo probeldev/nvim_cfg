@@ -1,2 +1,7 @@
 snippet helloworld 
 	log.Println("hello world")
+
+snippet sort 
+	sort.Slice(a, func(i, j int) bool {
+		return a[i] < a[j]
+	})
