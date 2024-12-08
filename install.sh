@@ -24,3 +24,5 @@ sudo npm install -g prettier
 sudo npm install -g @fsouza/prettierd
 
 sudo apt install shfmt
+
+sudo apt install clangd-19 # для C
