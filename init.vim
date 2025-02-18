@@ -31,7 +31,7 @@ nnoremap <space>a :NvimTreeToggle<CR>
 nnoremap <space>g :LazyGit<CR>
 nnoremap <space>c :lua require('lazyclip').show_clipboard()<CR>
 
-vnoremap <space>f :'<,'>!go-multiline-formatter \| gofmt<CR>
+vnoremap <space>f :'<,'>!go-multiline-formatter<CR>
 
 
 Plug 'nvim-treesitter/nvim-treesitter'
@@ -134,9 +134,9 @@ set background=light
 colorscheme github_light
 
 
-nnoremap <silent>    <A-h> <Cmd>BufferPrevious<CR>
-nnoremap <silent>    <A-l> <Cmd>BufferNext<CR>
-nnoremap <silent>    <A-j> <Cmd>BufferClose<CR>
+nnoremap <silent>    <space>h <Cmd>BufferPrevious<CR>
+nnoremap <silent>    <space>l <Cmd>BufferNext<CR>
+nnoremap <silent>    <space>j <Cmd>BufferClose<CR>
 
 " nmap <silent> gd <Plug>(coc-definition)
 " nmap <silent> gr <Plug>(coc-references)
