@@ -34,8 +34,6 @@ nnoremap <space>c :lua require('lazyclip').show_clipboard()<CR>
 vnoremap <space>f :'<,'>!go-multiline-formatter<CR>
 
 
-Plug 'nvim-treesitter/nvim-treesitter'
-Plug 'EdenEast/nightfox.nvim'
 
 
 Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
@@ -52,7 +50,6 @@ Plug 'ray-x/lsp_signature.nvim'
 Plug 'williamboman/mason.nvim'
 Plug 'williamboman/mason-lspconfig.nvim'
 Plug 'neovim/nvim-lspconfig'
-Plug 'nvim-treesitter/nvim-treesitter'
 
 
 
@@ -401,16 +398,6 @@ lua << EOF
 	require('mason').setup()
 EOF
 
-lua <<EOF
-require'nvim-treesitter.configs'.setup {
-	ensure_installed = { all },
-	auto_install = true,
-	
-	highlight = {
-	    enable = true,
-	},
-}
-EOF
 
 lua << EOF
 	require('neoscroll').setup({ mappings = {'<C-u>', '<C-d>', '<C-b>', '<C-f>'} })
@@ -437,3 +424,5 @@ EOF
 lua << EOF
 	require("lsp_lines").setup()
 EOF
+
+syntax off
