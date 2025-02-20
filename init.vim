@@ -425,4 +425,3 @@ lua << EOF
 	require("lsp_lines").setup()
 EOF
 
-syntax off
