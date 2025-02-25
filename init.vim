@@ -32,9 +32,12 @@ nnoremap <space>a :NvimTreeToggle<CR>
 nnoremap <space>g :LazyGit<CR>
 nnoremap <space>c :lua require('lazyclip').show_clipboard()<CR>
 nnoremap gr :Telescope lsp_references<CR>
-nnoremap <space>b :Telescope lsp_document_symbols symbol_width=50<CR>
-nnoremap <space>e :Telescope diagnostics bufnr=0<CR>
+" nnoremap <space>b :Telescope lsp_document_symbols symbol_width=50<CR>
+nnoremap <space>b :Telescope lsp_document_symbols symbol_width=50 previewer=false theme=dropdown <CR>
+nnoremap <space>e :Telescope diagnostics bufnr=0 previewer=false theme=dropdown<CR>
 nnoremap <space>g :Telescope current_buffer_fuzzy_find<CR>
+nnoremap <space>p <cmd>Telescope find_files previewer=false<cr>
+nnoremap <space>f <cmd>Telescope live_grep<cr>
 
 vnoremap <space>f :'<,'>!go-multiline-formatter<CR>
 
@@ -125,8 +128,6 @@ Plug 'lukas-reineke/indent-blankline.nvim'
 
 Plug 'https://git.sr.ht/~whynothugo/lsp_lines.nvim'
 
-nnoremap <space>p <cmd>Telescope find_files<cr>
-nnoremap <space>f <cmd>Telescope live_grep<cr>
 
 
 call plug#end()
