@@ -34,6 +34,7 @@ nnoremap <space>c :lua require('lazyclip').show_clipboard()<CR>
 nnoremap gr :Telescope lsp_references<CR>
 nnoremap <space>b :Telescope lsp_document_symbols symbol_width=50<CR>
 nnoremap <space>e :Telescope diagnostics bufnr=0<CR>
+nnoremap <space>g :Telescope current_buffer_fuzzy_find<CR>
 
 vnoremap <space>f :'<,'>!go-multiline-formatter<CR>
 
