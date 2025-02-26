@@ -3,6 +3,7 @@ sh -c 'curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/plug.
 
 mkdir ~/.config/nvim
 cp init.vim ~/.config/nvim/init.vim
+cp hotkey.vim ~/.config/nvim/hotkey.vim
 
 rm -r ~/.config/nvim/snippets
 cp -r snippets ~/.config/nvim/snippets
