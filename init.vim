@@ -110,8 +110,6 @@ Plug 'kdheepak/lazygit.nvim'
 Plug 'karb94/neoscroll.nvim'
 
 
-Plug 'atiladefreitas/lazyclip'
-
 Plug 'dcampos/nvim-snippy'
 
 Plug 'lukas-reineke/indent-blankline.nvim'
@@ -390,9 +388,6 @@ lua << EOF
 	require('neoscroll').setup({ mappings = {'<C-u>', '<C-d>', '<C-b>', '<C-f>'} })
 EOF
 
-lua << EOF
-	require("lazyclip").setup()
-EOF
 
 lua << EOF
 	require('snippy').setup({
@@ -415,4 +410,5 @@ EOF
 lua << EOF
 	require("telescope").setup()
 EOF
+
 
