@@ -114,7 +114,6 @@ Plug 'dcampos/nvim-snippy'
 
 Plug 'lukas-reineke/indent-blankline.nvim'
 
-Plug 'https://git.sr.ht/~whynothugo/lsp_lines.nvim'
 
 
 
@@ -359,55 +358,24 @@ require'lspconfig'.clangd.setup({
   },
 })
 
--- Настройка golangci-lint-langserver
-require'lspconfig'.golangci_lint_ls.setup{
-  on_attach = on_attach,
-  settings = {
-    golangci_lint_ls = {
-      command = { "golangci-lint-langserver" },
-      filetypes = { "go", "gomod" },
-      init_options = {
-        command = { "golangci-lint", "run", "--out-format", "json" },
-      },
-    },
-  },
+local lspconfig = require 'lspconfig'
+local configs = require 'lspconfig/configs'
+
+if not configs.golangcilsp then
+ 	configs.golangcilsp = {
+		default_config = {
+			cmd = {'golangci-lint-langserver'},
+			root_dir = lspconfig.util.root_pattern('.git', 'go.mod'),
+			init_options = {
+					command = { "golangci-lint", "run", "--output.json.path", "stdout", "--show-stats=false", "--issues-exit-code=1" };
+		};
+	}
+}
+end
+lspconfig.golangci_lint_ls.setup {
+	filetypes = {'go','gomod'}
 }
 
-
-require'lspconfig'.gopls.setup {
-    on_attach = on_attach,
-    settings = {
-        gopls = {
-            gofumpt = true,
-            staticcheck = true,
-            analyses = {
-                unusedparams = true,
-                shadow = true,
-                unusedwrite = true,
-            },
-            hints = {
-                assignVariableTypes = true,
-                compositeLiteralFields = true,
-                constantValues = true,
-                functionTypeParameters = true,
-                parameterNames = true,
-                rangeVariableTypes = true,
-            },
-        },
-    },
-    flags = {
-        debounce_text_changes = 150,
-    },
-}
-
-vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
-    vim.lsp.diagnostic.on_publish_diagnostics, {
-        virtual_text = false, -- Отключаем встроенные сообщения (у вас уже есть lsp_lines)
-        signs = true,
-        update_in_insert = false,
-        underline = true,
-    }
-)
 
 
 -- Use a loop to conveniently call 'setup' on multiple servers and
@@ -422,10 +390,12 @@ for _, lsp in ipairs(servers) do
   }
 end
 
--- Для lsp-lines
+
 vim.diagnostic.config({
-  virtual_text = false,
+   virtual_lines = true
 })
+
+vim.lsp.enable({ 'gopls' })
 
 EOF
 
@@ -453,9 +423,6 @@ lua << EOF
 	})
 EOF
 
-lua << EOF
-	require("lsp_lines").setup()
-EOF
 
 lua << EOF
 	require("telescope").setup()
