@@ -5,8 +5,6 @@ mkdir ~/.config/nvim
 cp init.vim ~/.config/nvim/init.vim
 cp hotkey.vim ~/.config/nvim/hotkey.vim
 
-rm -r ~/.config/nvim/snippets
-cp -r snippets ~/.config/nvim/snippets
 
 #curl -sL install-node.vercel.app/lts | sudo bash
 
