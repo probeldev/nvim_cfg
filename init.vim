@@ -4,171 +4,161 @@ call plug#begin()
 
 set mouse=a
 set number
-" set relativenumber
 
-" настройка отступов
+" Настройка отступов
 set tabstop=4
 set shiftwidth=4
 set list
 set listchars=tab:\|\—,trail:⋅,nbsp:⋅
-
-" set smartindent
-" Копирует отступ от предыдущей строки
-" set autoindent
-
-" Подсетка текущей строки
 set cursorline
-
-" Буфур обмена
 set clipboard=unnamedplus
 
-
-
+" Плагины (убраны lspconfig и mason)
 Plug 'nvim-tree/nvim-tree.lua'
-
 Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-tree/nvim-web-devicons'
 Plug 'MunifTanjim/nui.nvim'
-
-
-
-
-
 Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
-" Plug 'crusj/structrue-go.nvim'
-
-" Plug 'neoclide/coc.nvim', {'branch': 'release'}
-
-Plug 'neovim/nvim-lspconfig'
 Plug 'hrsh7th/nvim-cmp'
 Plug 'hrsh7th/cmp-nvim-lsp'
 Plug 'saadparwaiz1/cmp_luasnip'
 Plug 'L3MON4D3/LuaSnip'
 Plug 'ray-x/lsp_signature.nvim'
-Plug 'williamboman/mason.nvim'
-Plug 'williamboman/mason-lspconfig.nvim'
-Plug 'neovim/nvim-lspconfig'
-
-
-
-" inoremap <silent><expr> <cr> coc#pum#visible() && coc#pum#info()['index'] != -1 ? coc#pum#confirm() :
-"         \ "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
-
-
-Plug 'nvim-tree/nvim-web-devicons' " OPTIONAL: for file icons
-Plug 'lewis6991/gitsigns.nvim' " OPTIONAL: for git status
+Plug 'lewis6991/gitsigns.nvim'
 Plug 'romgrk/barbar.nvim'
-
 Plug 'ryanoasis/vim-devicons'
-
-Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-telescope/telescope.nvim', { 'tag': '0.1.6' }
-
-
 Plug 'tomtom/tcomment_vim'
-
 Plug 'akinsho/toggleterm.nvim', {'tag' : '*'}
-
-Plug 'MunifTanjim/nui.nvim'
 Plug 'tpope/vim-dadbod'
 Plug 'kristijanhusak/vim-dadbod-ui'
-
-
-" Plug 'Mofiqul/adwaita.nvim'
-
-Plug 'nvim-lua/plenary.nvim'
-Plug 'tanvirtin/vgit.nvim'
-" Plug 'sindrets/diffview.nvim'
-
 Plug 'nvim-lualine/lualine.nvim'
-" If you want to have icons in your statusline choose one of these
-Plug 'nvim-tree/nvim-web-devicons'
-
-
-
 Plug 'stevearc/conform.nvim'
-
-" theme
 Plug 'projekt0n/github-nvim-theme'
-
 Plug 'dstein64/nvim-scrollview'
-
-" barbecue
 Plug 'SmiteshP/nvim-navic'
 Plug 'utilyre/barbecue.nvim'
-
-
 Plug 'sontungexpt/stcursorword'
-
-
-
 Plug 'David-Kunz/gen.nvim'
-
-
 Plug 'kdheepak/lazygit.nvim'
-
 Plug 'karb94/neoscroll.nvim'
-
-
-Plug 'dcampos/nvim-snippy'
-
-Plug 'lukas-reineke/indent-blankline.nvim'
-
-
-
+Plug 'tanvirtin/vgit.nvim'
 
 call plug#end()
 
+" Цветовая схема
 set background=light
-" colorscheme adwaita
 colorscheme github_light
 
-
-
-" nmap <silent> gd <Plug>(coc-definition)
-" nmap <silent> gr <Plug>(coc-references)
-
-" Symbol renaming
-" nmap <A-r> <Plug>(coc-rename)
-" nmap <A-e> :CocList diagnostics<CR>
-
+" Базовые настройки
 lua require("toggleterm").setup()
-
-" nmap <A-d> :DiffviewOpen<CR>
-"
-" nmap <A-g> :lua require'structrue-go'.toggle()<CR>
-
-
-" " Use ctrl-[hjkl] to select the active split!
-" nmap <silent> <c-k> :wincmd k<CR>
-" nmap <silent> <c-j> :wincmd j<CR>
-" nmap <silent> <c-h> :wincmd h<CR>
-" nmap <silent> <c-l> :wincmd l<CR>
-
 lua require('vgit').setup()
 lua require('lualine').setup()
 
-
-lua << EOF
+" Форматирование
+lua <<EOF
 require("conform").setup({
-	formatters_by_ft = {
-    -- Use a sub-list to run only the first available formatter
-	-- javascript = { "prettierd", "prettier", stop_after_first = true },
-    -- html = {"prettierd", "prettier" },
-    -- css = {"prettierd", "prettier"},
+  formatters_by_ft = {
     sh = { "shfmt" }
   },
-   format_on_save = {
-    -- These options will be passed to conform.format()
+  format_on_save = {
     timeout_ms = 500,
     lsp_fallback = true,
   },
 })
 EOF
 
-lua << EOF 
-require("barbecue").setup()
+" LSP настройки
+lua <<EOF
+-- Настройки LSP серверов
+vim.lsp.config.gopls = {
+  cmd = {'gopls'},
+  root_markers = {'go.mod'},
+  filetypes = {'go'},
+  settings = {
+    gopls = {
+      analyses = {
+        unusedparams = true,
+        shadow = true,
+        unusedwrite = true,
+      },
+      staticcheck = true,
+      completeUnimported = true,
+      directoryFilters = { "-.git", "-node_modules" },
+    },
+  },
+}
+
+vim.lsp.config.golangci_lint_ls = {
+  cmd = {'golangci-lint-langserver'},
+  root_markers = {'.git', 'go.mod'},
+  filetypes = {'go', 'gomod'},
+  init_options = {
+    command = {
+      "golangci-lint", "run", "--output.json.path", "stdout",
+      "--show-stats=false", "--issues-exit-code=1"
+    }
+  }
+}
+
+-- Включение LSP серверов
+vim.lsp.enable({'gopls', 'golangci_lint_ls'})
+
+-- Настройка диагностики
+vim.diagnostic.config({
+  virtual_lines = {
+    current_line = true,
+  },
+  virtual_text = {
+    severity = { min = vim.diagnostic.severity.WARN },
+    prefix = '●',
+  },
+  signs = true,
+  underline = true,
+  update_in_insert = false,
+})
+
+-- Автодополнение
+vim.o.completeopt = 'menuone,noselect'
+
+local cmp = require 'cmp'
+cmp.setup {
+  snippet = {
+    expand = function(args)
+      require('luasnip').lsp_expand(args.body)
+    end,
+  },
+  mapping = cmp.mapping.preset.insert({
+    ['<C-p>'] = cmp.mapping.select_prev_item(),
+    ['<C-n>'] = cmp.mapping.select_next_item(),
+    ['<CR>'] = cmp.mapping.confirm({ select = true }),
+  }),
+  sources = cmp.config.sources({
+    { name = 'nvim_lsp' },
+    { name = 'luasnip' },
+  }),
+}
+
+-- Автоматическое включение LSP автодополнения
+vim.api.nvim_create_autocmd('LspAttach', {
+  callback = function(ev)
+    local client = vim.lsp.get_client_by_id(ev.data.client_id)
+    if client.supports_method('textDocument/completion') then
+      vim.lsp.completion.enable(true, client.id, ev.buf)
+    end
+  end,
+})
 EOF
+
+lua << EOF 
+require("nvim-tree").setup({
+diagnostics = {
+      enable = true,
+      show_on_dirs = true,
+    }, 
+})
+EOF
+
 
 lua << EOF 
 require("barbar").setup({
@@ -189,243 +179,10 @@ require("barbar").setup({
 EOF
 
 
-lua << EOF 
-    require("stcursorword").setup({
-        max_word_length = 100, -- if cursorword length > max_word_length then not highlight
-        min_word_length = 2, -- if cursorword length < min_word_length then not highlight
-        excluded = {
-            filetypes = {
-                "TelescopePrompt",
-            },
-            buftypes = {
-                -- "nofile",
-                -- "terminal",
-            },
-            patterns = { -- the pattern to match with the file path
-                -- "%.png$",
-                -- "%.jpg$",
-                -- "%.jpeg$",
-                -- "%.pdf$",
-                -- "%.zip$",
-                -- "%.tar$",
-                -- "%.tar%.gz$",
-                -- "%.tar%.xz$",
-                -- "%.tar%.bz2$",
-                -- "%.rar$",
-                -- "%.7z$",
-                -- "%.mp3$",
-                -- "%.mp4$",
-            },
-        },
-        highlight = {
-            underline = true,
-            fg = nil,
-            bg = nil,
-        },
-    })
+" Дополнительные настройки плагинов
+lua <<EOF
+require("barbecue").setup()
+require("stcursorword").setup()
+require("neoscroll").setup()
+require("telescope").setup()
 EOF
-
-
-lua << EOF 
-require("nvim-tree").setup({
-diagnostics = {
-      enable = true,
-      show_on_dirs = true,
-    }, 
-})
-EOF
-
-
-
-
-
-lua << EOF
--- Set completeopt to have a better completion experience
-vim.o.completeopt = 'menuone,noselect'
-
--- luasnip setup
-local luasnip = require 'luasnip'
-local async = require "plenary.async"
-
--- nvim-cmp setup
-local cmp = require 'cmp'
-cmp.setup {
-  completion = {
-    -- autocomplete = true 
-  },
-  snippet = {
-    expand = function(args)
-      require('luasnip').lsp_expand(args.body)
-    end,
-  },
-  mapping = {
-    ['<C-p>'] = cmp.mapping.select_prev_item(),
-    ['<C-n>'] = cmp.mapping.select_next_item(),
-    ['<C-d>'] = cmp.mapping.scroll_docs(-4),
-    ['<C-f>'] = cmp.mapping.scroll_docs(4),
-    ['<C-Space>'] = cmp.mapping.complete(),
-    ['<C-e>'] = cmp.mapping.close(),
-    ['<CR>'] = cmp.mapping.confirm {
-      behavior = cmp.ConfirmBehavior.Replace,
-      select = true,
-    },
-    ['<Tab>'] = function(fallback)
-      if vim.fn.pumvisible() == 1 then
-        vim.fn.feedkeys(vim.api.nvim_replace_termcodes('<C-n>', true, true, true), 'n')
-      elseif luasnip.expand_or_jumpable() then
-        vim.fn.feedkeys(vim.api.nvim_replace_termcodes('<Plug>luasnip-expand-or-jump', true, true, true), '')
-      else
-        fallback()
-      end
-    end,
-    ['<S-Tab>'] = function(fallback)
-      if vim.fn.pumvisible() == 1 then
-        vim.fn.feedkeys(vim.api.nvim_replace_termcodes('<C-p>', true, true, true), 'n')
-      elseif luasnip.jumpable(-1) then
-        vim.fn.feedkeys(vim.api.nvim_replace_termcodes('<Plug>luasnip-jump-prev', true, true, true), '')
-      else
-        fallback()
-      end
-    end,
-  },
-  sources = {
-    { name = 'nvim_lsp' },
-    { name = 'luasnip' },
-  },
-}
-
-local nvim_lsp = require('lspconfig')
-
-
--- Use an on_attach function to only map the following keys
--- after the language server attaches to the current buffer
-local on_attach = function(client, bufnr)
-
-  local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
-  local function buf_set_option(...) vim.api.nvim_buf_set_option(bufnr, ...) end
-
-  -- Enable completion triggered by <c-x><c-o>
-  buf_set_option('omnifunc', 'v:lua.vim.lsp.omnifunc')
-
-  -- Mappings.
-  local opts = { noremap=true, silent=true }
-
-  -- See `:help vim.lsp.*` for documentation on any of the below functions
-  buf_set_keymap('n', 'gD', '<cmd>lua vim.lsp.buf.declaration()<CR>', opts)
-  buf_set_keymap('n', 'gd', '<cmd>lua vim.lsp.buf.definition()<CR>', opts)
-  buf_set_keymap('n', 'K', '<cmd>lua vim.lsp.buf.hover()<CR>', opts)
-  buf_set_keymap('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
-  buf_set_keymap('n', '<C-k>', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
-  buf_set_keymap('n', '<space>wa', '<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>', opts)
-  buf_set_keymap('n', '<space>wr', '<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>', opts)
-  buf_set_keymap('n', '<space>wl', '<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>', opts)
-  buf_set_keymap('n', '<space>D', '<cmd>lua vim.lsp.buf.type_definition()<CR>', opts)
-  buf_set_keymap('n', '<space>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
-  buf_set_keymap('n', '<space>ca', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
-  -- buf_set_keymap('n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
-  -- buf_set_keymap('n', '<space>e', '<cmd>lua vim.diagnostic.open_float()<CR>', opts)
-  buf_set_keymap('n', '[d', '<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>', opts)
-  buf_set_keymap('n', ']d', '<cmd>lua vim.lsp.diagnostic.goto_next()<CR>', opts)
-  -- buf_set_keymap('n', '<space>q', '<cmd>lua vim.diagnostic.setloclist()<CR>', opts)
---  buf_set_keymap('n', '<space>f', '<cmd>lua vim.lsp.buf.formatting()<CR>', opts)
-
-  require "lsp_signature".on_attach({
-      bind = true, -- This is mandatory, otherwise border config won't get registered.
-      floating_window = true,
-      floating_window_above_cur_line = true,
-      floating_window_off_x = 20,
-      doc_lines = 10,
-      hint_prefix = '👻 '
-    }, bufnr)  -- Note: add in lsp client on-attach
-end
-
-
-
--- Stylelint format after save
-require'lspconfig'.stylelint_lsp.setup{
-  settings = {
-    stylelintplus = {
-      autoFixOnSave = true,
-      autoFixOnFormat = true,
-    }
-  }
-}
-
-require'lspconfig'.clangd.setup({
-  cmd = {'clangd', '--background-index', '--clang-tidy', '--log=verbose'},
-  init_options = {
-    fallbackFlags = { },
-  },
-})
-
-local lspconfig = require 'lspconfig'
-local configs = require 'lspconfig/configs'
-
-if not configs.golangcilsp then
- 	configs.golangcilsp = {
-		default_config = {
-			cmd = {'golangci-lint-langserver'},
-			root_dir = lspconfig.util.root_pattern('.git', 'go.mod'),
-			init_options = {
-					command = { "golangci-lint", "run", "--output.json.path", "stdout", "--show-stats=false", "--issues-exit-code=1" };
-		};
-	}
-}
-end
-lspconfig.golangci_lint_ls.setup {
-	filetypes = {'go','gomod'}
-}
-
-
-
--- Use a loop to conveniently call 'setup' on multiple servers and
--- map buffer local keybindings when the language server attaches
-local servers = {'vtsls', 'intelephense'}
-for _, lsp in ipairs(servers) do
-  nvim_lsp[lsp].setup {
-    on_attach = on_attach,
-    flags = {
-      debounce_text_changes = 150,
-    }
-  }
-end
-
-
-vim.diagnostic.config({
-   virtual_lines = true
-})
-
-vim.lsp.enable({ 'gopls' })
-
-EOF
-
-lua << EOF
-	require('mason').setup()
-EOF
-
-
-lua << EOF
-	require('neoscroll').setup({ mappings = {'<C-u>', '<C-d>', '<C-b>', '<C-f>'} })
-EOF
-
-
-lua << EOF
-	require('snippy').setup({
-		mappings = {
-			is = {
-				['<Tab>'] = 'expand_or_advance',
-				['<S-Tab>'] = 'previous',
-			},
-			nx = {
-				['<leader>x'] = 'cut_text',
-			},
-		},
-	})
-EOF
-
-
-lua << EOF
-	require("telescope").setup()
-EOF
-
-
