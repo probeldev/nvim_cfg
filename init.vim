@@ -359,10 +359,60 @@ require'lspconfig'.clangd.setup({
   },
 })
 
+-- Настройка golangci-lint-langserver
+require'lspconfig'.golangci_lint_ls.setup{
+  on_attach = on_attach,
+  settings = {
+    golangci_lint_ls = {
+      command = { "golangci-lint-langserver" },
+      filetypes = { "go", "gomod" },
+      init_options = {
+        command = { "golangci-lint", "run", "--out-format", "json" },
+      },
+    },
+  },
+}
+
+
+require'lspconfig'.gopls.setup {
+    on_attach = on_attach,
+    settings = {
+        gopls = {
+            gofumpt = true,
+            staticcheck = true,
+            analyses = {
+                unusedparams = true,
+                shadow = true,
+                unusedwrite = true,
+            },
+            hints = {
+                assignVariableTypes = true,
+                compositeLiteralFields = true,
+                constantValues = true,
+                functionTypeParameters = true,
+                parameterNames = true,
+                rangeVariableTypes = true,
+            },
+        },
+    },
+    flags = {
+        debounce_text_changes = 150,
+    },
+}
+
+vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
+    vim.lsp.diagnostic.on_publish_diagnostics, {
+        virtual_text = false, -- Отключаем встроенные сообщения (у вас уже есть lsp_lines)
+        signs = true,
+        update_in_insert = false,
+        underline = true,
+    }
+)
+
 
 -- Use a loop to conveniently call 'setup' on multiple servers and
 -- map buffer local keybindings when the language server attaches
-local servers = { 'gopls', 'vtsls', 'intelephense'}
+local servers = {'vtsls', 'intelephense'}
 for _, lsp in ipairs(servers) do
   nvim_lsp[lsp].setup {
     on_attach = on_attach,
