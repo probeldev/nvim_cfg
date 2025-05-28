@@ -129,6 +129,8 @@ vim.api.nvim_create_autocmd('LspAttach', {
 
 -- TODO:  move to hotkey
 vim.api.nvim_set_keymap("n", "gd", "<cmd>lua vim.lsp.buf.definition()<CR>", { noremap = true, silent = true })
+vim.api.nvim_set_keymap('', '<C-Space>', '<Nop>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('!', '<C-Space>', '<Nop>', { noremap = true, silent = true })
 
 
 -- Настройка nvim-tree
