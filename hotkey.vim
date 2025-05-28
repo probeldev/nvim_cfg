@@ -21,3 +21,5 @@ nnoremap <silent>    <space>j <Cmd>BufferClose<CR>
 tnoremap <Esc> <C-\><C-n>
 noremap <C-a> ^
 noremap <C-e> $
+
+
