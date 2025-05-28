@@ -1,3 +1,3 @@
-cp ~/.config/nvim/init.vim init.vim
+cp ~/.config/nvim/init.lua init.lua
 cp ~/.config/nvim/hotkey.vim hotkey.vim
 
