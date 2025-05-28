@@ -7,7 +7,6 @@ vim.fn['plug#']('nvim-tree/nvim-tree.lua')
 vim.fn['plug#']('nvim-lua/plenary.nvim')
 vim.fn['plug#']('nvim-tree/nvim-web-devicons')
 vim.fn['plug#']('MunifTanjim/nui.nvim')
-vim.fn['plug#']('fatih/vim-go', { ['do'] = ':GoUpdateBinaries' })
 vim.fn['plug#']('hrsh7th/nvim-cmp')
 vim.fn['plug#']('hrsh7th/cmp-nvim-lsp')
 vim.fn['plug#']('saadparwaiz1/cmp_luasnip')
@@ -77,45 +76,7 @@ vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
   }
 )
 
--- Настройки LSP серверов
-vim.lsp.config.gopls = {
-  cmd = { 'gopls' },
-  filetypes = { 'go' },
-  settings = {
-    gopls = {
-      analyses = {
-        unusedparams = true,
-        shadow = true,
-        unusedwrite = true,
-      },
-      staticcheck = true,
-      completeUnimported = true,
-      directoryFilters = { '-.git', '-node_modules' },
-      buildFlags = { "-tags", "integration" },
-    },
-  },
-}
 
-vim.lsp.config.golangci_lint_ls = {
-  cmd = { 'golangci-lint-langserver' },
-  root_dir = function(bufnr, on_dir)
-    local root = vim.fs.root(bufnr, { 'go.mod', '.git' })
-    if root then
-      on_dir(root)
-    else
-      local cwd = vim.fn.getcwd()
-      on_dir(cwd)
-    end
-  end,
-  filetypes = { 'go', 'gomod' },
-  init_options = {
-    command = {
-      'golangci-lint', 'run', "--output.json.path", "stdout", "--show-stats=false", "--issues-exit-code=1",
-    },
-  },
-  on_init = function(client)
-  end,
-}
 
 -- Включение LSP серверов
 vim.lsp.enable({ 'gopls', 'golangci_lint_ls' })

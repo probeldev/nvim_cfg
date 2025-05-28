@@ -5,6 +5,9 @@ mkdir ~/.config/nvim
 cp init.vim ~/.config/nvim/init.vim
 cp hotkey.vim ~/.config/nvim/hotkey.vim
 
+rm -rf ~/.config/nvim/lsp
+cp -r lsp ~/.config/nvim/lsp
+
 
 #curl -sL install-node.vercel.app/lts | sudo bash
 
