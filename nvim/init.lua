@@ -21,7 +21,6 @@ vim.fn['plug#']('utilyre/barbecue.nvim')
 vim.fn['plug#']('sontungexpt/stcursorword')
 vim.fn['plug#']('David-Kunz/gen.nvim')
 vim.fn['plug#']('karb94/neoscroll.nvim')
-vim.fn['plug#']('tanvirtin/vgit.nvim')
 vim.fn['plug#end']()
 
 -- Базовые настройки редактора
@@ -40,7 +39,6 @@ vim.cmd('colorscheme github_light')
 
 -- Настройка плагинов
 require('toggleterm').setup()
-require('vgit').setup()
 require('lualine').setup()
 
 -- Настройка nvim-tree
