@@ -22,7 +22,6 @@ vim.fn['plug#']('SmiteshP/nvim-navic')
 
 
 vim.fn['plug#']('sontungexpt/stcursorword')
-vim.fn['plug#']('David-Kunz/gen.nvim')
 vim.fn['plug#']('karb94/neoscroll.nvim')
 vim.fn['plug#end']()
 
