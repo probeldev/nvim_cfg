@@ -70,6 +70,12 @@ vim.api.nvim_create_autocmd('LspAttach', {
 	end,
 })
 
+vim.api.nvim_create_autocmd("BufWritePre", {
+  pattern = "*",
+  callback = function(args)
+    vim.lsp.buf.format({ async = false })  -- синхронное форматирование
+  end,
+})
 
 end
 
