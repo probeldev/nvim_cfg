@@ -36,6 +36,8 @@ function M.setup()
   -- Перемещение по строке
   map({ "n", "v" }, "<C-a>", "^", { desc = "Move to start of line" })
   map({ "n", "v" }, "<C-e>", "$", { desc = "Move to end of line" })
+
+  vim.keymap.set('i', '<C-Space>', '<Nop>', { silent = true })
 end
 
 return M
