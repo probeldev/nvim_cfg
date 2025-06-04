@@ -12,6 +12,7 @@ function M.setup()
   map("n", "<leader>a", ":NvimTreeToggle<CR>", { desc = "Toggle NvimTree" })
   -- map("n", "<leader>c", ":lua require('lazyclip').show_clipboard()<CR>", { desc = "Show clipboard" }) -- Удалите или исправьте
   map("n", "gr", ":Telescope lsp_references<CR>", { desc = "LSP references" })
+  map("n", "gd", "<cmd>lua vim.lsp.buf.definition()<CR>", { noremap = true, silent = true })
   map("n", "<leader>b", ":Telescope lsp_document_symbols symbol_width=50<CR>", { desc = "Document symbols" })
   map("n", "<leader>e", ":Telescope diagnostics bufnr=0<CR>", { desc = "Diagnostics" })
   map("n", "<leader>fg", ":Telescope current_buffer_fuzzy_find<CR>", { desc = "Fuzzy find in buffer" })
