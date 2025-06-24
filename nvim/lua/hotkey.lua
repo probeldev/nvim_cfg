@@ -23,7 +23,7 @@ function M.setup()
   map("n", "<leader>f", "<cmd>Telescope live_grep<CR>", { desc = "Live grep" })
 
   -- Визуальный режим
-  map("v", "<leader>f", ":'<,'>!go-multiline-formatter<CR>", { desc = "Format with go-multiline-formatter" })
+  map("v", "<leader>f", ":'<,'>!go-multiline-formatter -multiline<CR>", { desc = "Format with go-multiline-formatter" })
 
   -- Терминал и вкладки
   map("n", "<leader>x", "<Cmd>ToggleTerm size=80 direction=float<CR>", { desc = "Toggle floating terminal" })
