@@ -17,7 +17,11 @@ vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
 
 
 -- Включение LSP серверов
-vim.lsp.enable({ 'gopls', 'golangci_lint_ls' })
+vim.lsp.enable({ 
+	'gopls',
+	'golangci_lint_ls',
+	'vtsls'
+})
 vim.lsp.set_log_level("debug")
 
 -- Настройка диагностики (показ всех уровней)
