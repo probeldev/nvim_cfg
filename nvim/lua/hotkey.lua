@@ -24,6 +24,7 @@ function M.setup()
 
   -- Визуальный режим
   map("v", "<leader>f", ":'<,'>!go-multiline-formatter -multiline<CR>", { desc = "Format with go-multiline-formatter" })
+  map("v", "<leader>l", ":'<,'>!go-multiline-formatter -logfunc<CR>", { desc = "Format with go-multiline-formatter" })
 
   -- Терминал и вкладки
   map("n", "<leader>x", "<Cmd>ToggleTerm size=80 direction=float<CR>", { desc = "Toggle floating terminal" })
