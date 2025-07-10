@@ -23,6 +23,9 @@ vim.fn['plug#']('SmiteshP/nvim-navic')
 
 vim.fn['plug#']('sontungexpt/stcursorword')
 vim.fn['plug#']('karb94/neoscroll.nvim')
+
+
+vim.fn['plug#']('MeanderingProgrammer/render-markdown.nvim')
 vim.fn['plug#end']()
 
 -- Базовые настройки редактора
@@ -73,4 +76,5 @@ require('telescope').setup()
 -- Подключение пользовательских модулей
 require("hotkey").setup()
 require("lsp").setup()
+require('render-markdown').setup({})
 
