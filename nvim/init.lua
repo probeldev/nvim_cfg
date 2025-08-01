@@ -1,3 +1,7 @@
+vim.opt.spell = true                -- Включить проверку орфографии
+vim.opt.spelllang = { 'ru', 'en' }  -- Установить языки (русский и английский)
+vim.opt.spelloptions = 'camel'      -- Опционально: улучшает проверку для CamelCase слов
+
 -- Добавляем ~/.config/nvim/ в package.path
 package.path = package.path .. ";" .. vim.fn.stdpath("config") .. "/?.lua"
 
@@ -33,10 +37,18 @@ vim.opt.mouse = 'a'                          -- Включить мышь
 vim.opt.number = true                        -- Показывать номера строк
 vim.opt.tabstop = 4                          -- Размер табуляции
 vim.opt.shiftwidth = 4                       -- Размер отступа
-vim.opt.list = true                          -- Показывать скрытые символы
-vim.opt.listchars = 'tab:|—,trail:⋅,nbsp:⋅'  -- Символы для табуляции и пробелов
 vim.opt.cursorline = true                    -- Подсветка текущей строки
 vim.opt.clipboard = 'unnamedplus'            -- Использовать системный буфер обмена
+
+vim.opt.list = true -- Включает отображение скрытых символов
+vim.opt.listchars = {
+  eol = '¬',      -- Перенос строки (End Of Line)
+  tab = '>-',     -- Табы (показывает начало и заполнение)
+  trail = '~',    -- Пробелы в конце строки
+  extends = '>',  -- Если строка продолжается за пределы экрана (справа)
+  precedes = '<', -- Если строка продолжается за пределы экрана (слева)
+  space = ' ',    -- Пробелы (если нужно их подсвечивать)
+}
 
 -- Цветовая схема
 vim.opt.background = 'light'
