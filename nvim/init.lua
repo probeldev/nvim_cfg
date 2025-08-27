@@ -84,9 +84,12 @@ require('barbecue').setup()
 require('stcursorword').setup()
 require('neoscroll').setup()
 require('telescope').setup()
+require('render-markdown').setup({})
 
 -- Подключение пользовательских модулей
 require("hotkey").setup()
 require("lsp").setup()
-require('render-markdown').setup({})
+require("customtitle").setup()
+
+
 
