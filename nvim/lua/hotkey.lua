@@ -19,8 +19,11 @@ function M.setup()
   map("n", "<leader>b", ":Telescope lsp_document_symbols symbol_width=50<CR>", { desc = "Document symbols" })
   map("n", "<leader>e", ":Telescope diagnostics bufnr=0<CR>", { desc = "Diagnostics" })
   map("n", "<leader>fg", ":Telescope current_buffer_fuzzy_find<CR>", { desc = "Fuzzy find in buffer" })
-  map("n", "<leader>p", "<cmd>Telescope find_files previewer=false<CR>", { desc = "Find files" })
-  map("n", "<leader>f", "<cmd>Telescope live_grep<CR>", { desc = "Live grep" })
+  -- map("n", "<leader>p", "<cmd>Telescope find_files previewer=false layout_strategy=center<CR>", { desc = "Find files" })
+  -- map("n", "<leader>f", "<cmd>Telescope live_grep<CR>", { desc = "Live grep" })
+
+  map("n", "<leader>p", "<cmd>RgFiles<CR>", { desc = "Find files" })
+  map("n", "<leader>f", "<cmd>Rg<CR>", { desc = "Live grep" })
 
   -- Визуальный режим
   map("v", "<leader>f", ":'<,'>!go-multiline-formatter -multiline<CR>", { desc = "Format with go-multiline-formatter" })

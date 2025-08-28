@@ -90,6 +90,5 @@ require('render-markdown').setup({})
 require("hotkey").setup()
 require("lsp").setup()
 require("customtitle").setup()
-
-
+require("ripgrep").setup()
 
