@@ -76,7 +76,7 @@ function M.show_result(output)
 end
 
 -- Создаем пользовательскую команду
-vim.api.nvim_create_user_command("SortText", function()
+vim.api.nvim_create_user_command("DbWorkflowRunQuery", function()
     M.execute_sort_command()
 end, { range = true })
 

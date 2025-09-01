@@ -101,12 +101,10 @@ end, {desc = 'Открыть кастомный quickfix меню'})
 
 
 -- Команда для вызова меню
-vim.api.nvim_create_user_command('MyMenu', function()
+vim.api.nvim_create_user_command('DbWorkflowShowStruc', function()
     require('mymenu').create_dynamic_menu()
 end, {desc = 'Открыть кастомное меню'})
 
--- Добавьте mapping для удобства
-vim.keymap.set('n', '<leader>mm', ':MyMenu<CR>', {desc = 'Открыть меню'})
 
 
 -- Загрузка плагина
