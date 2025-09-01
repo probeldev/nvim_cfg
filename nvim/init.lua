@@ -107,3 +107,7 @@ end, {desc = 'Открыть кастомное меню'})
 
 -- Добавьте mapping для удобства
 vim.keymap.set('n', '<leader>mm', ':MyMenu<CR>', {desc = 'Открыть меню'})
+
+
+-- Загрузка плагина
+require("mycommand").setup()
