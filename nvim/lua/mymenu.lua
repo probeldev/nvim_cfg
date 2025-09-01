@@ -5,8 +5,19 @@ function M.run_action(action_name)
     local command = "/home/sergey/work/opensource/db-workflow/main -table=" .. action_name
     local output = vim.fn.system(command)
     
-    -- Создаем новую вкладку
-    vim.cmd('tabnew')
+    -- Запоминаем текущее quickfix окно
+    local qf_win = vim.api.nvim_get_current_win()
+    local qf_height = vim.api.nvim_win_get_height(qf_win)
+    local win_view = vim.fn.winsaveview()
+    
+    -- Закрываем все другие окна, кроме quickfix
+    vim.cmd('only')
+    
+    -- Создаем горизонтальное разделение окна
+    vim.cmd('split')
+    
+    -- Получаем новое окно (окно с результатом)
+    local result_win = vim.api.nvim_get_current_win()
     
     -- Заполняем буфер выводом программы
     local lines = vim.split(output, '\n')
@@ -23,6 +34,17 @@ function M.run_action(action_name)
     if action_name == "logs" then
         vim.bo.filetype = 'log'
     end
+    
+    -- Возвращаем фокус в quickfix окно
+    vim.api.nvim_set_current_win(qf_win)
+    
+    -- Восстанавливаем размер quickfix окна
+    vim.api.nvim_win_set_height(qf_win, qf_height)
+    
+    -- Восстанавливаем вид окна (позицию прокрутки и курсор)
+    vim.fn.winrestview(win_view)
+    
+    -- Quickfix остается активным, результат виден в соседнем окне
 end
 
 -- Динамически загружаем меню из программы
@@ -40,29 +62,10 @@ function M.create_dynamic_menu()
             local action_name = line:match('^%s*(%S+)%s*$')
             if action_name then
                 table.insert(actions_list, action_name)
-                
-                -- Создаем красивый текст для меню
-                -- local display_text = ""
-                -- if action_name == "users" then
-                --     display_text = "👥 Показать пользователей"
-                -- elseif action_name == "orders" then
-                --     display_text = "📦 Показать заказы"
-                -- elseif action_name == "requests" then
-                --     display_text = "📝 Показать запросы"
-                -- elseif action_name == "statistics" then
-                --     display_text = "📊 Показать статистику"
-                -- elseif action_name == "logs" then
-                --     display_text = "📋 Показать логи"
-                -- else
-                --     display_text = "🔧 " .. action_name
-                -- end
-
-				display_text = "Show " .. action_name
+                display_text = "Show " .. action_name
                 
                 table.insert(qf_items, {
-                    filename = "menu://action",
-                    lnum = i,
-                    col = 1,
+                    filename = "db:",
                     text = display_text
                 })
             end
@@ -86,12 +89,12 @@ function M.create_dynamic_menu()
     end
 end
 
--- Обработчик выбора в меню
+-- Обработчик выбора в меню (разделение окна)
 function M.handle_menu_select()
     local line_num = vim.fn.line('.')
     if M.menu_actions and M.menu_actions[line_num] then
+        -- Выполняем действие (закрывает другие окна и открывает результат в split)
         M.menu_actions[line_num]()
-        vim.cmd('cclose') -- Закрываем меню после выбора
     else
         vim.cmd('cc') -- Стандартное поведение
     end
