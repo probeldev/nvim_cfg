@@ -3,6 +3,10 @@ local M = {}
 -- Глобальная переменная для хранения ID буфера результатов
 M.result_buffer_id = nil
 
+
+function M.setup(user_config)
+end
+
 -- Функция для получения или создания буфера результатов
 function M.get_or_create_result_buffer()
 	-- Если буфер уже существует и валиден, возвращаем его
@@ -170,5 +174,11 @@ end
 
 -- Инициализация при загрузке модуля
 M.setup_quickfix_mappings()
+
+
+-- Команда для вызова меню
+vim.api.nvim_create_user_command('DbWorkflowShowStruc', function()
+   M.create_dynamic_menu()
+end, {desc = 'Открыть кастомное меню'})
 
 return M

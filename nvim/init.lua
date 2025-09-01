@@ -100,12 +100,9 @@ vim.api.nvim_create_user_command('MyCustomQuickfix', function()
 end, {desc = 'Открыть кастомный quickfix меню'})
 
 
--- Команда для вызова меню
-vim.api.nvim_create_user_command('DbWorkflowShowStruc', function()
-    require('mymenu').create_dynamic_menu()
-end, {desc = 'Открыть кастомное меню'})
 
 
 
 -- Загрузка плагина
+require("mymenu").setup()
 require("mycommand").setup()
