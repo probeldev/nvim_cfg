@@ -2,6 +2,10 @@ vim.opt.spell = true                -- Включить проверку орф�
 vim.opt.spelllang = { 'ru', 'en' }  -- Установить языки (русский и английский)
 vim.opt.spelloptions = 'camel'      -- Опционально: улучшает проверку для CamelCase слов
 
+
+-- Отключить все возможности Tree-sitter
+vim.treesitter.start = function() end
+
 -- Добавляем ~/.config/nvim/ в package.path
 package.path = package.path .. ";" .. vim.fn.stdpath("config") .. "/?.lua"
 
@@ -104,5 +108,6 @@ end, {desc = 'Открыть кастомный quickfix меню'})
 
 
 -- Загрузка плагина
-require("mymenu").setup()
-require("mycommand").setup()
+require("db-workflow-show-struct").setup()
+require("db-workflow-run-query").setup()
+require("db-workflow-run-query-raw").setup()

@@ -153,7 +153,7 @@ function M.setup_quickfix_mappings()
 	vim.cmd([[
 	augroup CustomQuickfixMenu
 		autocmd!
-		autocmd FileType qf nnoremap <buffer> <CR> :lua require('mymenu').handle_menu_select()<CR>
+		autocmd FileType qf nnoremap <buffer> <CR> :lua require('db-workflow-show-struct').handle_menu_select()<CR>
 		autocmd FileType qf nnoremap <buffer> q :cclose<CR>
 		autocmd FileType qf nnoremap <buffer> <Esc> :cclose<CR>
 	augroup END

@@ -47,6 +47,14 @@ function M.show_result(output)
         vim.api.nvim_buf_delete(existing_buf, { force = true })
     end
 
+    -- Сохраняем текущие настройки скролла
+    local old_sidescroll = vim.o.sidescroll
+    local old_sidescrolloff = vim.o.sidescrolloff
+    
+    -- Устанавливаем глобальные настройки для горизонтального скролла
+    vim.o.sidescroll = 1
+    vim.o.sidescrolloff = 5
+
     -- Создаем новое окно снизу
     vim.cmd("belowright new")
     local buf = vim.api.nvim_get_current_buf()
@@ -60,6 +68,10 @@ function M.show_result(output)
     vim.bo[buf].filetype = "text"
     vim.bo[buf].modifiable = true
     
+    -- Ключевые настройки для горизонтального скролла (оконные опции)
+    vim.wo[win].wrap = false          -- Отключаем перенос строк
+    vim.wo[win].linebreak = false     -- Отключаем перенос по словам
+
     -- Записываем данные
     local lines = vim.split(output, "\n")
     vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
@@ -72,7 +84,23 @@ function M.show_result(output)
     local height = math.min(math.max(#lines + 2, 5), 20)
     vim.api.nvim_win_set_height(win, height)
     
+    -- Автоматически прокручиваем к началу
+    vim.cmd("normal! gg")
+    
     print("Сортировка завершена! Результат в буфере: " .. config.result_buffer_name)
+    
+    -- Устанавливаем маппинги для удобного скролла
+    vim.api.nvim_buf_set_keymap(buf, 'n', '<Left>', 'zh', {noremap = true, silent = true})
+    vim.api.nvim_buf_set_keymap(buf, 'n', '<Right>', 'zl', {noremap = true, silent = true})
+    vim.api.nvim_buf_set_keymap(buf, 'n', 'q', ':q<CR>', {noremap = true, silent = true})
+    
+    -- Восстанавливаем настройки при закрытии буфера
+    vim.api.nvim_buf_attach(buf, false, {
+        on_detach = function()
+            vim.o.sidescroll = old_sidescroll
+            vim.o.sidescrolloff = old_sidescrolloff
+        end
+    })
 end
 
 -- Создаем пользовательскую команду
