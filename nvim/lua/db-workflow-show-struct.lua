@@ -2,7 +2,8 @@ local M = {}
 
 -- Глобальная переменная для хранения ID буфера результатов
 M.result_buffer_id = nil
-
+-- Таблица для отслеживания наших quickfix окон
+M.custom_quickfix_windows = {}
 
 function M.setup(user_config)
 end
@@ -110,11 +111,10 @@ function M.create_dynamic_menu()
 			local action_name = line:match('^%s*(%S+)%s*$')
 			if action_name then
 				table.insert(actions_list, action_name)
-				display_text = "Show " .. action_name
 				
 				table.insert(qf_items, {
-					filename = "db:",
-					text = display_text
+					filename = "db:custom_menu",
+					text = "Show " .. action_name
 				})
 			end
 		end
@@ -132,32 +132,44 @@ function M.create_dynamic_menu()
 	if #qf_items > 0 then
 		vim.fn.setqflist(qf_items, ' ')
 		vim.cmd('copen')
+		
+		-- Получаем ID только что созданного quickfix окна и добавляем в нашу таблицу
+		local win_id = vim.api.nvim_get_current_win()
+		M.custom_quickfix_windows[win_id] = true
+		
+		-- Устанавливаем mapping только для этого конкретного окна
+		M.setup_window_mappings(win_id)
 	else
 		vim.notify("Меню пустое или программа menu не вернула действия", vim.log.levels.WARN)
 	end
 end
 
--- Обработчик выбора в меню (разделение окна)
+-- Установка mappings только для конкретного окна
+function M.setup_window_mappings(win_id)
+	local buf = vim.api.nvim_win_get_buf(win_id)
+	
+	-- Устанавливаем mapping только для этого буфера
+	vim.api.nvim_buf_set_keymap(buf, 'n', '<CR>', 
+		'<cmd>lua require("db-workflow-show-struct").handle_menu_select()<CR>',
+		{silent = true, noremap = true})
+	
+	vim.api.nvim_buf_set_keymap(buf, 'n', 'q', 
+		'<cmd>cclose<CR>',
+		{silent = true, noremap = true})
+	
+	vim.api.nvim_buf_set_keymap(buf, 'n', '<Esc>', 
+		'<cmd>cclose<CR>',
+		{silent = true, noremap = true})
+end
+
+-- Обработчик выбора в меню
 function M.handle_menu_select()
 	local line_num = vim.fn.line('.')
 	if M.menu_actions and M.menu_actions[line_num] then
-		-- Выполняем действие
 		M.menu_actions[line_num]()
 	else
-		vim.cmd('cc') -- Стандартное поведение
+		vim.cmd('cc')
 	end
-end
-
--- Настройка mappings для quickfix
-function M.setup_quickfix_mappings()
-	vim.cmd([[
-	augroup CustomQuickfixMenu
-		autocmd!
-		autocmd FileType qf nnoremap <buffer> <CR> :lua require('db-workflow-show-struct').handle_menu_select()<CR>
-		autocmd FileType qf nnoremap <buffer> q :cclose<CR>
-		autocmd FileType qf nnoremap <buffer> <Esc> :cclose<CR>
-	augroup END
-	]])
 end
 
 -- Функция для закрытия буфера результатов
@@ -172,9 +184,17 @@ function M.close_result_buffer()
 	end
 end
 
--- Инициализация при загрузке модуля
-M.setup_quickfix_mappings()
+-- Удаляем глобальные mappings для quickfix
+function M.cleanup_quickfix_mappings()
+	vim.cmd([[
+	augroup CustomQuickfixMenu
+		autocmd!
+	augroup END
+	]])
+end
 
+-- Инициализация при загрузке модуля
+M.cleanup_quickfix_mappings()
 
 -- Команда для вызова меню
 vim.api.nvim_create_user_command('DbWorkflowShowStruc', function()
