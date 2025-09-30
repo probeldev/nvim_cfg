@@ -2,6 +2,30 @@ vim.opt.spell = true                -- Включить проверку орф�
 vim.opt.spelllang = { 'ru', 'en' }  -- Установить языки (русский и английский)
 vim.opt.spelloptions = 'camel'      -- Опционально: улучшает проверку для CamelCase слов
 
+-- Настройка путей для swap, backup и undo файлов
+vim.opt.directory = { vim.fn.stdpath('data') .. '/swap//', '.' }
+vim.opt.backupdir = { vim.fn.stdpath('data') .. '/backup//', '.' }
+vim.opt.undodir = { vim.fn.stdpath('data') .. '/undo//', '.' }
+
+-- Создать необходимые директории при запуске Neovim
+local function create_directories()
+  local data_dir = vim.fn.stdpath('data')
+  local dirs = {
+    data_dir .. '/swap',
+    data_dir .. '/backup', 
+    data_dir .. '/undo',
+  }
+  
+  for _, dir in ipairs(dirs) do
+    if vim.fn.isdirectory(dir) == 0 then
+      vim.fn.mkdir(dir, 'p')
+    end
+  end
+end
+
+create_directories()
+
+
 
 -- Отключить все возможности Tree-sitter
 vim.treesitter.start = function() end
