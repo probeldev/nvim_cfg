@@ -129,3 +129,7 @@ require("ripgrep").setup()
 require("db-workflow-show-struct").setup()
 require("db-workflow-run-query").setup()
 require("db-workflow-run-query-raw").setup()
+
+require("remove-completed-tasks")
+
+
