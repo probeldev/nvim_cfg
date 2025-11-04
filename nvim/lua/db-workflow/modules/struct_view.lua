@@ -21,6 +21,7 @@ function M.show()
     end)
 end
 
+-- Экспортируем функцию получения доступных действий
 function M.get_available_actions()
     local menu_output = vim.fn.system(config.get_command() .. ' -tables')
     local menu_lines = utils.split_lines(menu_output)
