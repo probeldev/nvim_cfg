@@ -8,10 +8,18 @@ local raw_query = require("db-workflow.modules.raw_query")
 local struct_view = require("db-workflow.modules.struct_view")
 local main_menu = require("db-workflow.ui.main_menu")
 local nvim_ui_picker = require("db-workflow.ui.nvim_ui_picker")
+local config_loader = require("db-workflow.core.config_loader")
 
 function M.setup(user_config)
     config.setup(user_config)
     M.setup_commands()
+    
+    -- Автоматически загружаем конфигурацию при старте
+    if config_loader.has_config() then
+        utils.notify("✅ DB Workflow: Конфигурация загружена")
+    else
+        utils.notify("💡 DB Workflow: Для настройки подключения к БД создайте файл db-workflow.json", vim.log.levels.INFO)
+    end
 end
 
 function M.setup_commands()
@@ -20,7 +28,7 @@ function M.setup_commands()
         M.show_main_menu()
     end, { desc = "Главное меню DB Workflow" })
 
-    -- Индивидуальные команды (оставляем для обратной совместимости)
+    -- Индивидуальные команды
     vim.api.nvim_create_user_command("DbWorkflowRunQueryRaw", function(opts)
         raw_query.execute(opts)
     end, { range = true, desc = "Выполнить raw запрос db-workflow" })
@@ -37,6 +45,11 @@ function M.setup_commands()
     vim.api.nvim_create_user_command("DbWorkflowNewQuery", function()
         M.create_new_query()
     end, { desc = "Создать новый SQL запрос" })
+
+    -- Команда для создания конфигурационного файла
+    vim.api.nvim_create_user_command("DbWorkflowCreateConfig", function()
+        M.create_config_template()
+    end, { desc = "Создать шаблон конфигурационного файла" })
 end
 
 -- Главное меню
@@ -55,6 +68,7 @@ end
 
 -- Обработчик выбора в главном меню
 function M.handle_menu_selection(action)
+    utils.notify(action, vim.log.levels.ERROR)
     if action == "new_query" then
         M.create_new_query()
     elseif action == "run_query" then
@@ -62,7 +76,9 @@ function M.handle_menu_selection(action)
     elseif action == "run_raw_query" then
         M.execute_raw_query_from_menu()
     elseif action == "show_structure" then
-        M.show_structure_menu()
+        M.show_structure_menu()  -- ВЫЗЫВАЕМ ПОДМЕНЮ, а не создание конфига!
+    elseif action == "create_config" then
+        M.create_config_template()
     end
 end
 
@@ -72,6 +88,17 @@ function M.handle_structure_selection(action)
         struct_view.show()
     elseif action == "data" then
         M.show_table_data()
+    end
+end
+
+-- Создание шаблона конфигурационного файла
+function M.create_config_template()
+    local success = config_loader.create_template_config()
+    if success then
+        -- Перезагружаем конфигурацию
+        if config_loader.has_config() then
+            utils.notify("✅ Конфигурация перезагружена")
+        end
     end
 end
 

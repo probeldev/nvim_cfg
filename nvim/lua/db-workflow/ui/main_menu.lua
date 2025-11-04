@@ -32,6 +32,13 @@ local menu_options = {
         description = "Показать структуры и данные таблиц БД",
         icon = "🏗️",
         key = "s"
+    },
+    {
+        value = "create_config",
+        display = "⚙️  Создать конфиг",
+        description = "Создать шаблон конфигурационного файла",
+        icon = "⚙️",
+        key = "c"
     }
 }
 
@@ -72,7 +79,7 @@ function M.show_main_menu(on_select)
     -- Создаем floating window для главного меню
     local buf = vim.api.nvim_create_buf(false, true)
     local width = 85
-    local height = #menu_options + 8
+    local height = #menu_options + 9  -- +1 строка для информации о конфиге
     
     local win = vim.api.nvim_open_win(buf, true, {
         relative = "editor",
@@ -84,24 +91,26 @@ function M.show_main_menu(on_select)
         border = "rounded",
     })
     
+    -- Получаем информацию о конфигурации
+    local config_info = utils.get_config_info()
+    
     -- Заполняем содержимое
     local content = {
         "┌" .. string.rep("─", width - 2) .. "┐",
         "│" .. string.format(" %-81s", "🚀 DB Workflow - Главное меню") .. "│",
-        "│" .. string.format(" %-81s", "Выберите действие:") .. "│",
-        "│" .. string.format(" %-81s", "j/k/↑/↓ - навигация, / - поиск, 1-4 - быстрый выбор") .. "│",
+        "│" .. string.format(" %-81s", config_info) .. "│",
+        "│" .. string.format(" %-81s", "j/k/↑/↓ - навигация, Enter - выбрать, Esc - закрыть") .. "│",
         "├" .. string.rep("─", width - 2) .. "┤",
     }
     
     for i, text in ipairs(display_texts) do
         local option = menu_options[i]
-        local quick_key = string.format("[%s]", option.key)
-        local line = string.format("│ %-2s %-78s │", quick_key, text)
+        local line = string.format("│   %-79s │", text)
         table.insert(content, line)
     end
     
     table.insert(content, "├" .. string.rep("─", width - 2) .. "┤")
-    table.insert(content, "│" .. string.format(" %-81s", "Enter - выбрать, Esc/q - закрыть") .. "│")
+    table.insert(content, "│" .. string.format(" %-81s", "Enter - выбрать, Esc - закрыть") .. "│")
     table.insert(content, "└" .. string.rep("─", width - 2) .. "┘")
     
     vim.api.nvim_buf_set_lines(buf, 0, -1, false, content)
@@ -111,27 +120,30 @@ function M.show_main_menu(on_select)
     -- Настройка подсветки
     vim.cmd([[
     syntax match DbWorkflowTitle /^│.*🚀 DB Workflow.*│$/
+    syntax match DbWorkflowConfig /^│.*📁.*│$/
+    syntax match DbWorkflowConfig /^│.*❌.*│$/
     syntax match DbWorkflowHelp /^│.*Выберите действие:.*│$/
     syntax match DbWorkflowHelp /^│.*j.k.↑.↓.*│$/
     syntax match DbWorkflowHelp /^│.*Enter - выбрать.*│$/
-    syntax match DbWorkflowQuickKey /\[[nqrs]\]/
     syntax match DbWorkflowBorder /^[┌├└][─]*[┐┤┘]$/
     syntax match DbWorkflowBorder /^│/
     
     highlight link DbWorkflowTitle Title
+    highlight link DbWorkflowConfig Comment
     highlight link DbWorkflowHelp Comment
-    highlight link DbWorkflowQuickKey Number
     highlight link DbWorkflowBorder Comment
     ]])
     
-    -- Текущая позиция
-    local current_line = 6  -- Первый элемент данных
+    -- Текущая позиция (начинаем с первого пункта меню)
+    local current_line = 6
     local max_line = 5 + #display_texts
     
     -- Функция обновления подсветки
     local function update_highlight()
+        -- Очищаем предыдущую подсветку
         vim.api.nvim_buf_clear_namespace(buf, -1, 0, -1)
         
+        -- Подсвечиваем текущую строку
         if current_line >= 6 and current_line <= max_line then
             vim.api.nvim_buf_add_highlight(buf, -1, "Visual", current_line - 1, 0, -1)
         end
@@ -147,83 +159,28 @@ function M.show_main_menu(on_select)
         end
     end
     
-    -- Функция выбора
-    local function select_option(option_value)
-        close_window()
-        on_select(option_value)
-    end
-    
     -- Функция выбора текущего элемента
     local function select_current()
         if current_line >= 6 and current_line <= max_line then
             local selected_text = display_texts[current_line - 5]
             if value_map[selected_text] then
-                select_option(value_map[selected_text])
+                close_window()
+                on_select(value_map[selected_text])
                 return true
             end
         end
         return false
-    end
-    
-    -- Функция быстрого выбора по цифре
-    local function quick_select(key)
-        for i, option in ipairs(menu_options) do
-            if option.key == key then
-                select_option(option.value)
-                return true
-            end
-        end
-        return false
-    end
-    
-    -- Функция поиска
-    local function search()
-        vim.api.nvim_win_close(win, true)
-        
-        vim.fn.inputsave()
-        local pattern = vim.fn.input("Поиск действия: ")
-        vim.fn.inputrestore()
-        
-        if pattern and pattern ~= "" then
-            for i, text in ipairs(display_texts) do
-                if text:lower():find(pattern:lower(), 1, true) then
-                    current_line = i + 5
-                    break
-                end
-            end
-        end
-        
-        -- Пересоздаем окно
-        win = vim.api.nvim_open_win(buf, true, {
-            relative = "editor",
-            width = width,
-            height = height,
-            col = math.floor((vim.o.columns - width) / 2),
-            row = math.floor((vim.o.lines - height) / 2),
-            style = "minimal",
-            border = "rounded",
-        })
-        
-        vim.api.nvim_set_current_win(win)
-        update_highlight()
     end
     
     -- Инициализация подсветки
     update_highlight()
     
-    -- Настройка keymaps
+    -- Упрощенные key mappings (без быстрых клавиш)
     local mappings = {
-        -- Навигация
+        -- Навигация вниз
         { 'n', 'j', function() 
             if current_line < max_line then
                 current_line = current_line + 1
-                update_highlight()
-            end
-        end, { buffer = buf } },
-        
-        { 'n', 'k', function() 
-            if current_line > 6 then
-                current_line = current_line - 1
                 update_highlight()
             end
         end, { buffer = buf } },
@@ -235,6 +192,14 @@ function M.show_main_menu(on_select)
             end
         end, { buffer = buf } },
         
+        -- Навигация вверх
+        { 'n', 'k', function() 
+            if current_line > 6 then
+                current_line = current_line - 1
+                update_highlight()
+            end
+        end, { buffer = buf } },
+        
         { 'n', '<Up>', function() 
             if current_line > 6 then
                 current_line = current_line - 1
@@ -242,24 +207,9 @@ function M.show_main_menu(on_select)
             end
         end, { buffer = buf } },
         
-        -- Быстрый выбор по цифрам и буквам
-        { 'n', '1', function() quick_select('n') end, { buffer = buf } },
-        { 'n', '2', function() quick_select('q') end, { buffer = buf } },
-        { 'n', '3', function() quick_select('r') end, { buffer = buf } },
-        { 'n', '4', function() quick_select('s') end, { buffer = buf } },
-        
-        { 'n', 'n', function() quick_select('n') end, { buffer = buf } },
-        { 'n', 'q', function() quick_select('q') end, { buffer = buf } },
-        { 'n', 'r', function() quick_select('r') end, { buffer = buf } },
-        { 'n', 's', function() quick_select('s') end, { buffer = buf } },
-        
         -- Выбор
         { 'n', '<CR>', select_current, { buffer = buf } },
         { 'n', '<Space>', select_current, { buffer = buf } },
-        
-        -- Поиск
-        { 'n', '/', search, { buffer = buf } },
-        { 'n', '?', search, { buffer = buf } },
         
         -- Быстрая навигация
         { 'n', 'gg', function() 
@@ -274,7 +224,7 @@ function M.show_main_menu(on_select)
         
         -- Закрытие
         { 'n', '<ESC>', close_window, { buffer = buf } },
-        { 'n', 'Q', close_window, { buffer = buf } },
+        { 'n', 'q', close_window, { buffer = buf } },
         { 'n', '<C-c>', close_window, { buffer = buf } },
     }
     
@@ -305,7 +255,7 @@ function M.show_structure_submenu(on_select)
     -- Создаем floating window для подменю
     local buf = vim.api.nvim_create_buf(false, true)
     local width = 85
-    local height = #structure_menu_options + 8
+    local height = #structure_menu_options + 7
     
     local win = vim.api.nvim_open_win(buf, true, {
         relative = "editor",
@@ -322,19 +272,17 @@ function M.show_structure_submenu(on_select)
         "┌" .. string.rep("─", width - 2) .. "┐",
         "│" .. string.format(" %-81s", "🏗️  DB Workflow - Просмотр таблиц") .. "│",
         "│" .. string.format(" %-81s", "Выберите тип просмотра:") .. "│",
-        "│" .. string.format(" %-81s", "j/k/↑/↓ - навигация, / - поиск, 1-2 - быстрый выбор") .. "│",
+        "│" .. string.format(" %-81s", "j/k/↑/↓ - навигация, Enter - выбрать, Esc - закрыть") .. "│",
         "├" .. string.rep("─", width - 2) .. "┤",
     }
     
     for i, text in ipairs(display_texts) do
-        local option = structure_menu_options[i]
-        local quick_key = string.format("[%s]", option.key)
-        local line = string.format("│ %-2s %-78s │", quick_key, text)
+        local line = string.format("│   %-79s │", text)
         table.insert(content, line)
     end
     
     table.insert(content, "├" .. string.rep("─", width - 2) .. "┤")
-    table.insert(content, "│" .. string.format(" %-81s", "Enter - выбрать, Esc/q - закрыть") .. "│")
+    table.insert(content, "│" .. string.format(" %-81s", "Enter - выбрать, Esc - закрыть") .. "│")
     table.insert(content, "└" .. string.rep("─", width - 2) .. "┘")
     
     vim.api.nvim_buf_set_lines(buf, 0, -1, false, content)
@@ -347,18 +295,16 @@ function M.show_structure_submenu(on_select)
     syntax match DbWorkflowHelp /^│.*Выберите тип просмотра:.*│$/
     syntax match DbWorkflowHelp /^│.*j.k.↑.↓.*│$/
     syntax match DbWorkflowHelp /^│.*Enter - выбрать.*│$/
-    syntax match DbWorkflowQuickKey /\[[sd]\]/
     syntax match DbWorkflowBorder /^[┌├└][─]*[┐┤┘]$/
     syntax match DbWorkflowBorder /^│/
     
     highlight link DbWorkflowTitle Title
     highlight link DbWorkflowHelp Comment
-    highlight link DbWorkflowQuickKey Number
     highlight link DbWorkflowBorder Comment
     ]])
     
     -- Текущая позиция
-    local current_line = 6  -- Первый элемент данных
+    local current_line = 6
     local max_line = 5 + #display_texts
     
     -- Функция обновления подсветки
@@ -380,83 +326,28 @@ function M.show_structure_submenu(on_select)
         end
     end
     
-    -- Функция выбора
-    local function select_option(option_value)
-        close_window()
-        on_select(option_value)
-    end
-    
     -- Функция выбора текущего элемента
     local function select_current()
         if current_line >= 6 and current_line <= max_line then
             local selected_text = display_texts[current_line - 5]
             if value_map[selected_text] then
-                select_option(value_map[selected_text])
+                close_window()
+                on_select(value_map[selected_text])
                 return true
             end
         end
         return false
-    end
-    
-    -- Функция быстрого выбора по цифре
-    local function quick_select(key)
-        for i, option in ipairs(structure_menu_options) do
-            if option.key == key then
-                select_option(option.value)
-                return true
-            end
-        end
-        return false
-    end
-    
-    -- Функция поиска
-    local function search()
-        vim.api.nvim_win_close(win, true)
-        
-        vim.fn.inputsave()
-        local pattern = vim.fn.input("Поиск действия: ")
-        vim.fn.inputrestore()
-        
-        if pattern and pattern ~= "" then
-            for i, text in ipairs(display_texts) do
-                if text:lower():find(pattern:lower(), 1, true) then
-                    current_line = i + 5
-                    break
-                end
-            end
-        end
-        
-        -- Пересоздаем окно
-        win = vim.api.nvim_open_win(buf, true, {
-            relative = "editor",
-            width = width,
-            height = height,
-            col = math.floor((vim.o.columns - width) / 2),
-            row = math.floor((vim.o.lines - height) / 2),
-            style = "minimal",
-            border = "rounded",
-        })
-        
-        vim.api.nvim_set_current_win(win)
-        update_highlight()
     end
     
     -- Инициализация подсветки
     update_highlight()
     
-    -- Настройка keymaps
+    -- Упрощенные key mappings для подменю
     local mappings = {
-        -- Навигация
+        -- Навигация вниз
         { 'n', 'j', function() 
             if current_line < max_line then
                 current_line = current_line + 1
-                update_highlight()
-            end
-        end, { buffer = buf } },
-        
-        { 'n', 'k', function() 
-            if current_line > 6 then
-                current_line = current_line - 1
                 update_highlight()
             end
         end, { buffer = buf } },
@@ -468,6 +359,14 @@ function M.show_structure_submenu(on_select)
             end
         end, { buffer = buf } },
         
+        -- Навигация вверх
+        { 'n', 'k', function() 
+            if current_line > 6 then
+                current_line = current_line - 1
+                update_highlight()
+            end
+        end, { buffer = buf } },
+        
         { 'n', '<Up>', function() 
             if current_line > 6 then
                 current_line = current_line - 1
@@ -475,20 +374,9 @@ function M.show_structure_submenu(on_select)
             end
         end, { buffer = buf } },
         
-        -- Быстрый выбор по цифрам и буквам
-        { 'n', '1', function() quick_select('s') end, { buffer = buf } },
-        { 'n', '2', function() quick_select('d') end, { buffer = buf } },
-        
-        { 'n', 's', function() quick_select('s') end, { buffer = buf } },
-        { 'n', 'd', function() quick_select('d') end, { buffer = buf } },
-        
         -- Выбор
         { 'n', '<CR>', select_current, { buffer = buf } },
         { 'n', '<Space>', select_current, { buffer = buf } },
-        
-        -- Поиск
-        { 'n', '/', search, { buffer = buf } },
-        { 'n', '?', search, { buffer = buf } },
         
         -- Быстрая навигация
         { 'n', 'gg', function() 
@@ -503,7 +391,7 @@ function M.show_structure_submenu(on_select)
         
         -- Закрытие
         { 'n', '<ESC>', close_window, { buffer = buf } },
-        { 'n', 'Q', close_window, { buffer = buf } },
+        { 'n', 'q', close_window, { buffer = buf } },
         { 'n', '<C-c>', close_window, { buffer = buf } },
     }
     

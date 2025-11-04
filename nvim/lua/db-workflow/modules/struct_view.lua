@@ -23,7 +23,8 @@ end
 
 -- Экспортируем функцию получения доступных действий
 function M.get_available_actions()
-    local menu_output = vim.fn.system(config.get_command() .. ' -tables')
+    local menu_output, err = utils.execute_system_command(config.get_command() .. ' -tables', "")
+    utils.notify(config.get_command() .. ' -tables', vim.log.levels.ERROR)
     local menu_lines = utils.split_lines(menu_output)
     
     local actions = {}
