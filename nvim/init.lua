@@ -133,9 +133,7 @@ require("ripgrep").setup()
 
 
 -- Загрузка плагина
-require("db-workflow-show-struct").setup()
-require("db-workflow-run-query").setup()
-require("db-workflow-run-query-raw").setup()
+require('db-workflow').setup()
 
 require("remove-completed-tasks")
 
