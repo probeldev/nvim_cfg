@@ -31,6 +31,11 @@ function M.setup_commands()
     vim.api.nvim_create_user_command("DbWorkflowShowStruct", function()
         struct_view.show()
     end, { desc = "Показать структуры db-workflow" })
+
+    -- Новая команда для создания запроса
+    vim.api.nvim_create_user_command("DbWorkflowNewQuery", function()
+        M.create_new_query()
+    end, { desc = "Создать новый SQL запрос" })
 end
 
 -- Главное меню
@@ -42,13 +47,53 @@ end
 
 -- Обработчик выбора в меню
 function M.handle_menu_selection(action)
-    if action == "run_query" then
+    if action == "new_query" then
+        M.create_new_query()
+    elseif action == "run_query" then
         M.execute_query_from_menu()
     elseif action == "run_raw_query" then
         M.execute_raw_query_from_menu()
     elseif action == "show_structure" then
         struct_view.show()
     end
+end
+
+-- Создание нового SQL запроса
+function M.create_new_query()
+    -- Генерируем уникальное имя для буфера
+    local timestamp = os.date("%Y%m%d_%H%M%S")
+    local buffer_name = string.format("db_workflow://query/new_query_%s.sql", timestamp)
+    
+    -- Создаем новый буфер
+    vim.cmd("edit " .. vim.fn.fnameescape(buffer_name))
+    local buf = vim.api.nvim_get_current_buf()
+    
+    -- Настраиваем буфер для SQL
+    vim.bo[buf].filetype = "sql"
+    vim.bo[buf].buftype = ""
+    vim.bo[buf].bufhidden = "hide"
+    vim.bo[buf].swapfile = false
+    vim.bo[buf].modifiable = true
+    vim.bo[buf].readonly = false
+    
+    -- Добавляем шаблон запроса
+    local template = {
+        "-- Новый SQL запрос",
+        "-- Создан: " .. os.date("%Y-%m-%d %H:%M:%S"),
+        "",
+        "SELECT * FROM table_name",
+        "WHERE condition = 'value'",
+        "ORDER BY column_name",
+        "LIMIT 100;",
+        ""
+    }
+    
+    vim.api.nvim_buf_set_lines(buf, 0, -1, false, template)
+    
+    -- Устанавливаем курсор после шаблона
+    vim.api.nvim_win_set_cursor(0, {8, 0})
+    
+    utils.notify("✅ Создан новый SQL запрос")
 end
 
 -- Функции для вызова из меню с проверкой выделения
@@ -80,5 +125,6 @@ end
 M.execute_query = query.execute
 M.execute_raw_query = raw_query.execute
 M.show_struct = struct_view.show
+M.new_query = M.create_new_query
 
 return M

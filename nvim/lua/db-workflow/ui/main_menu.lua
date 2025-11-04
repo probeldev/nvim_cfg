@@ -6,6 +6,13 @@ local utils = require("db-workflow.core.utils")
 -- Опции главного меню
 local menu_options = {
     {
+        value = "new_query",
+        display = "🆕 Новый запрос",
+        description = "Создать новый SQL запрос в буфере",
+        icon = "🆕",
+        key = "n"
+    },
+    {
         value = "run_query",
         display = "📝 Выполнить запрос",
         description = "Выполнить SQL запрос с форматированием",
@@ -64,7 +71,7 @@ function M.show_main_menu(on_select)
         "┌" .. string.rep("─", width - 2) .. "┐",
         "│" .. string.format(" %-81s", "🚀 DB Workflow - Главное меню") .. "│",
         "│" .. string.format(" %-81s", "Выберите действие:") .. "│",
-        "│" .. string.format(" %-81s", "j/k/↑/↓ - навигация, / - поиск, 1-3 - быстрый выбор") .. "│",
+        "│" .. string.format(" %-81s", "j/k/↑/↓ - навигация, / - поиск, 1-4 - быстрый выбор") .. "│",
         "├" .. string.rep("─", width - 2) .. "┤",
     }
     
@@ -89,7 +96,7 @@ function M.show_main_menu(on_select)
     syntax match DbWorkflowHelp /^│.*Выберите действие:.*│$/
     syntax match DbWorkflowHelp /^│.*j.k.↑.↓.*│$/
     syntax match DbWorkflowHelp /^│.*Enter - выбрать.*│$/
-    syntax match DbWorkflowQuickKey /\[[qrs]\]/
+    syntax match DbWorkflowQuickKey /\[[nqrs]\]/
     syntax match DbWorkflowBorder /^[┌├└][─]*[┐┤┘]$/
     syntax match DbWorkflowBorder /^│/
     
@@ -217,11 +224,13 @@ function M.show_main_menu(on_select)
             end
         end, { buffer = buf } },
         
-        -- Быстрый выбор по цифрам
-        { 'n', '1', function() quick_select('q') end, { buffer = buf } },
-        { 'n', '2', function() quick_select('r') end, { buffer = buf } },
-        { 'n', '3', function() quick_select('s') end, { buffer = buf } },
+        -- Быстрый выбор по цифрам и буквам
+        { 'n', '1', function() quick_select('n') end, { buffer = buf } },
+        { 'n', '2', function() quick_select('q') end, { buffer = buf } },
+        { 'n', '3', function() quick_select('r') end, { buffer = buf } },
+        { 'n', '4', function() quick_select('s') end, { buffer = buf } },
         
+        { 'n', 'n', function() quick_select('n') end, { buffer = buf } },
         { 'n', 'q', function() quick_select('q') end, { buffer = buf } },
         { 'n', 'r', function() quick_select('r') end, { buffer = buf } },
         { 'n', 's', function() quick_select('s') end, { buffer = buf } },
