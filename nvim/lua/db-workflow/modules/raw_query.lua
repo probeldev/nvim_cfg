@@ -1,3 +1,4 @@
+-- modules/raw_query.lua
 local M = {}
 
 local config = require("db-workflow.core.config")
@@ -21,7 +22,7 @@ function M.execute(opts)
         return
     end
 
-    result_display.show("=== Результат raw запроса: ===\n" .. output, "raw")
+    result_display.show(output, "raw_query_result", "sql")
 end
 
 return M

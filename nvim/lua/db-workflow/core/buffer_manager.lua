@@ -4,8 +4,19 @@ local buffer_cache = {}
 local scroll_settings = {}
 
 function M.create_result_buffer(buffer_name, filetype)
-    -- Закрываем предыдущее окно с таким же именем буфера
-    M.close_buffer_by_name(buffer_name)
+    -- Проверяем, существует ли уже буфер с таким именем
+    local existing_buf = vim.fn.bufnr(buffer_name)
+    if existing_buf ~= -1 and vim.api.nvim_buf_is_valid(existing_buf) then
+        -- Буфер существует, переключаемся на него
+        local existing_win = M.find_window_by_buffer(existing_buf)
+        if existing_win then
+            vim.api.nvim_set_current_win(existing_win)
+        else
+            -- Буфер есть, но окна нет - создаем новое окно
+            vim.cmd("edit " .. vim.fn.fnameescape(buffer_name))
+        end
+        return existing_buf, vim.api.nvim_get_current_win()
+    end
 
     -- Сохраняем текущие настройки скролла
     scroll_settings[buffer_name] = {
@@ -13,18 +24,18 @@ function M.create_result_buffer(buffer_name, filetype)
         sidescrolloff = vim.o.sidescrolloff
     }
 
-    -- Создаем новое окно снизу
-    vim.cmd("belowright new")
+    -- Создаем новый буфер (не сплитим, а заменяем текущее окно)
+    vim.cmd("edit " .. vim.fn.fnameescape(buffer_name))
     local buf = vim.api.nvim_get_current_buf()
     local win = vim.api.nvim_get_current_win()
 
     -- Настраиваем буфер
-    vim.api.nvim_buf_set_name(buf, buffer_name)
     vim.bo[buf].buftype = "nofile"
-    vim.bo[buf].bufhidden = "wipe"
+    vim.bo[buf].bufhidden = "hide"
     vim.bo[buf].swapfile = false
     vim.bo[buf].filetype = filetype or "text"
     vim.bo[buf].modifiable = true
+    vim.bo[buf].readonly = false
 
     -- Настройки окна для горизонтального скролла
     vim.wo[win].wrap = false
@@ -40,10 +51,19 @@ function M.create_result_buffer(buffer_name, filetype)
     return buf, win
 end
 
+function M.find_window_by_buffer(bufnr)
+    local windows = vim.api.nvim_list_wins()
+    for _, win in ipairs(windows) do
+        if vim.api.nvim_win_get_buf(win) == bufnr then
+            return win
+        end
+    end
+    return nil
+end
+
 function M.configure_buffer_size(win, content_lines, config)
-    local line_count = #content_lines
-    local height = math.min(math.max(line_count + 2, config.min_height), config.max_height)
-    vim.api.nvim_win_set_height(win, height)
+    -- Для полноэкранного режима не меняем размер
+    -- Можно добавить авто-размер если нужно, но пока оставим полноэкранный
 end
 
 function M.setup_buffer_mappings(buf)
@@ -51,7 +71,8 @@ function M.setup_buffer_mappings(buf)
         { 'n', '<Left>', 'zh', { noremap = true, silent = true } },
         { 'n', '<Right>', 'zl', { noremap = true, silent = true } },
         { 'n', 'q', ':q<CR>', { noremap = true, silent = true } },
-        { 'n', '<Esc>', ':q<CR>', { noremap = true, silent = true } }
+        { 'n', '<Esc>', ':q<CR>', { noremap = true, silent = true } },
+        { 'n', '<C-w>', ':q<CR>', { noremap = true, silent = true } }
     }
 
     for _, mapping in ipairs(mappings) do
@@ -74,8 +95,8 @@ end
 function M.close_buffer_by_name(buffer_name)
     local existing_buf = vim.fn.bufnr(buffer_name)
     if existing_buf ~= -1 then
-        local existing_win = vim.fn.bufwinid(existing_buf)
-        if existing_win ~= -1 then
+        local existing_win = M.find_window_by_buffer(existing_buf)
+        if existing_win then
             vim.api.nvim_win_close(existing_win, true)
         end
         vim.api.nvim_buf_delete(existing_buf, { force = true })

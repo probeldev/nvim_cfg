@@ -6,33 +6,75 @@ local utils = require("db-workflow.core.utils")
 
 function M.show(output, title_suffix, filetype)
     local buffer_settings = config.get_buffer_settings()
-    local window_settings = config.get_window_settings()
     
-    local buffer_name = buffer_settings.name
-    if title_suffix then
-        buffer_name = buffer_name .. "_" .. title_suffix
-    end
-
+    local buffer_name = "db_workflow://" .. (title_suffix or "result")
+    
+    -- Создаем или переключаемся на буфер
     local buf, win = buffer_manager.create_result_buffer(buffer_name, filetype)
     
-    -- Записываем данные
+    -- Подготавливаем содержимое с заголовком
+    local timestamp = os.date("%H:%M:%S")
+    local header = string.format("=== %s (generated at %s) ===", title_suffix or "Result", timestamp)
     local lines = utils.split_lines(output)
+    
+    -- Вставляем заголовок в начало
+    table.insert(lines, 1, "")
+    table.insert(lines, 1, header)
+    table.insert(lines, 1, string.rep("=", #header))
+    
+    -- Записываем данные (очищаем буфер сначала)
+    vim.bo[buf].modifiable = true
     vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
     
     -- Устанавливаем только для чтения
     vim.bo[buf].modifiable = false
     vim.bo[buf].modified = false
     
-    -- Настраиваем размер окна
-    buffer_manager.configure_buffer_size(win, lines, window_settings)
+    -- Настраиваем маппинги
+    buffer_manager.setup_buffer_mappings(buf)
     
-    -- Автоматически прокручиваем к началу
-    vim.cmd("normal! gg")
+    -- Прокручиваем к началу данных (после заголовка)
+    vim.api.nvim_win_set_cursor(win, {4, 0})
+    
+    utils.notify("✅ Данные загружены: " .. (title_suffix or "результат"))
+    
+    return buf, win
+end
+
+-- Специальная функция для показа структур (полноэкранный режим)
+function M.show_structure(output, table_name, filetype)
+    local buffer_name = "db_workflow://structure/" .. table_name
+    
+    -- Создаем или переключаемся на буфер
+    local buf, win = buffer_manager.create_result_buffer(buffer_name, filetype or "sql")
+    
+    -- Подготавливаем содержимое
+    local timestamp = os.date("%H:%M:%S")
+    local header = string.format("=== Structure: %s (loaded at %s) ===", table_name, timestamp)
+    local lines = utils.split_lines(output)
+    
+    -- Вставляем красивый заголовок
+    local separator = string.rep("=", #header)
+    table.insert(lines, 1, "")
+    table.insert(lines, 1, header)
+    table.insert(lines, 1, separator)
+    table.insert(lines, 1, "")
+    
+    -- Записываем данные
+    vim.bo[buf].modifiable = true
+    vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
+    
+    -- Устанавливаем только для чтения
+    vim.bo[buf].modifiable = false
+    vim.bo[buf].modified = false
     
     -- Настраиваем маппинги
     buffer_manager.setup_buffer_mappings(buf)
     
-    utils.notify("Операция завершена! Результат в буфере: " .. buffer_name)
+    -- Прокручиваем к началу данных
+    vim.api.nvim_win_set_cursor(win, {5, 0})
+    
+    utils.notify("✅ Структура загружена: " .. table_name)
     
     return buf, win
 end

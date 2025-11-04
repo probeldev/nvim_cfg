@@ -1,3 +1,4 @@
+-- modules/query.lua
 local M = {}
 
 local config = require("db-workflow.core.config")
@@ -21,7 +22,7 @@ function M.execute(opts)
         return
     end
 
-    result_display.show("=== Результат запроса: ===\n" .. output, "query")
+    result_display.show(output, "query_result", "sql")
 end
 
 return M
