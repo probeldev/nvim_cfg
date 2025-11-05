@@ -7,27 +7,18 @@ local query = require("db-workflow.modules.query")
 local raw_query = require("db-workflow.modules.raw_query")
 local struct_view = require("db-workflow.modules.struct_view")
 local procedure_view = require("db-workflow.modules.procedure_view")
+local telescope_menu = require("db-workflow.ui.telescope_menu")
 local config_loader = require("db-workflow.core.config_loader")
-
--- Ленивая загрузка telescope_menu чтобы избежать ошибок если Telescope не установлен
-local telescope_menu = nil
-
-local function get_telescope_menu()
-    if not telescope_menu then
-        local ok, tm = pcall(require, "db-workflow.ui.telescope_menu")
-        if ok then
-            telescope_menu = tm
-        else
-            utils.warn("Telescope не установлен. Установите telescope.nvim для улучшенного меню.")
-            return nil
-        end
-    end
-    return telescope_menu
-end
 
 function M.setup(user_config)
     config.setup(user_config)
-    M.setup_commands()  -- Исправлено: была опечатка setup_commands
+    M.setup_commands()
+    
+    -- Проверяем наличие Telescope
+    if not pcall(require, 'telescope') then
+        utils.error("Telescope не установлен. Пожалуйста, установите telescope.nvim для работы плагина.")
+        return
+    end
     
     -- Автоматически загружаем конфигурацию при старте
     if config_loader.has_config() then
@@ -71,36 +62,18 @@ function M.setup_commands()
     end, { desc = "Создать шаблон конфигурационного файла" })
 end
 
--- Главное меню (с fallback на старый UI если Telescope не доступен)
+-- Главное меню
 function M.show_main_menu()
-    local tm = get_telescope_menu()
-    if tm then
-        tm.show_main_menu(function(selected_action)
-            M.handle_menu_selection(selected_action)
-        end)
-    else
-        -- Fallback на старый UI
-        local main_menu = require("db-workflow.ui.main_menu")
-        main_menu.show_main_menu(function(selected_action)
-            M.handle_menu_selection(selected_action)
-        end)
-    end
+    telescope_menu.show_main_menu(function(selected_action)
+        M.handle_menu_selection(selected_action)
+    end)
 end
 
--- Меню для структуры БД (с fallback)
+-- Меню для структуры БД
 function M.show_structure_menu()
-    local tm = get_telescope_menu()
-    if tm then
-        tm.show_structure_menu(function(selected_action)
-            M.handle_structure_selection(selected_action)
-        end)
-    else
-        -- Fallback на старый UI
-        local main_menu = require("db-workflow.ui.main_menu")
-        main_menu.show_structure_submenu(function(selected_action)
-            M.handle_structure_selection(selected_action)
-        end)
-    end
+    telescope_menu.show_structure_menu(function(selected_action)
+        M.handle_structure_selection(selected_action)
+    end)
 end
 
 -- Обработчик выбора в главном меню
@@ -142,42 +115,24 @@ function M.show_table_picker(get_actions_func, action_type)
         return
     end
     
-    local tm = get_telescope_menu()
-    if tm then
-        local titles = {
-            structure = "🏗️  Выберите таблицу для просмотра структуры",
-            data = "📊 Выберите таблицу для просмотра данных", 
-            procedure = "🔄 Выберите процедуру для просмотра"
-        }
-        
-        tm.show_table_picker(actions, titles[action_type] or "Выберите элемент", function(selected_item)
-            if selected_item then
-                if action_type == "structure" then
-                    struct_view.run_action(selected_item)
-                elseif action_type == "data" then
-                    utils.notify("Загружаем данные таблицы: " .. selected_item)
-                    M.create_table_data_query(selected_item)
-                elseif action_type == "procedure" then
-                    procedure_view.run_action(selected_item)
-                end
+    local titles = {
+        structure = "🏗️  Выберите таблицу для просмотра структуры",
+        data = "📊 Выберите таблицу для просмотра данных", 
+        procedure = "🔄 Выберите процедуру для просмотра"
+    }
+    
+    telescope_menu.show_table_picker(actions, titles[action_type] or "Выберите элемент", function(selected_item)
+        if selected_item then
+            if action_type == "structure" then
+                struct_view.run_action(selected_item)
+            elseif action_type == "data" then
+                utils.notify("Загружаем данные таблицы: " .. selected_item)
+                M.create_table_data_query(selected_item)
+            elseif action_type == "procedure" then
+                procedure_view.run_action(selected_item)
             end
-        end)
-    else
-        -- Fallback на старый UI
-        local nvim_ui_picker = require("db-workflow.ui.nvim_ui_picker")
-        nvim_ui_picker.show_actions_best(actions, function(selected_item)
-            if selected_item then
-                if action_type == "structure" then
-                    struct_view.run_action(selected_item)
-                elseif action_type == "data" then
-                    utils.notify("Загружаем данные таблицы: " .. selected_item)
-                    M.create_table_data_query(selected_item)
-                elseif action_type == "procedure" then
-                    procedure_view.run_action(selected_item)
-                end
-            end
-        end)
-    end
+        end
+    end)
 end
 
 -- Создание шаблона конфигурационного файла

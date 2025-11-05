@@ -1,10 +1,5 @@
 local M = {}
 
-local has_telescope, telescope = pcall(require, "telescope")
-if not has_telescope then
-    return M
-end
-
 local pickers = require("telescope.pickers")
 local finders = require("telescope.finders")
 local conf = require("telescope.config").values
@@ -70,11 +65,6 @@ M.structure_menu_items = {
     }
 }
 
--- Форматирование отображения в Telescope
-local function display_formatter(item)
-    return item.display
-end
-
 -- Главное меню через Telescope
 function M.show_main_menu(on_select)
     local config_info = utils.get_config_info()
@@ -86,7 +76,7 @@ function M.show_main_menu(on_select)
             entry_maker = function(entry)
                 return {
                     value = entry.value,
-                    display = display_formatter(entry),
+                    display = entry.display,
                     ordinal = entry.ordinal
                 }
             end
@@ -100,6 +90,12 @@ function M.show_main_menu(on_select)
                     on_select(selection.value)
                 end
             end)
+            
+            -- Дополнительные клавиши для закрытия
+            map("i", "<C-c>", actions.close)
+            map("n", "<C-c>", actions.close)
+            map("n", "q", actions.close)
+            
             return true
         end,
     }):find()
@@ -114,7 +110,7 @@ function M.show_structure_menu(on_select)
             entry_maker = function(entry)
                 return {
                     value = entry.value,
-                    display = display_formatter(entry),
+                    display = entry.display,
                     ordinal = entry.ordinal
                 }
             end
@@ -128,6 +124,11 @@ function M.show_structure_menu(on_select)
                     on_select(selection.value)
                 end
             end)
+            
+            map("i", "<C-c>", actions.close)
+            map("n", "<C-c>", actions.close)
+            map("n", "q", actions.close)
+            
             return true
         end,
     }):find()
@@ -174,7 +175,8 @@ function M.show_table_picker(actions_list, title, on_select)
         previewer = nil,
         layout_config = {
             width = 0.8,
-            height = 0.6
+            height = 0.6,
+            prompt_position = "top"
         },
         attach_mappings = function(prompt_bufnr, map)
             actions.select_default:replace(function()
@@ -184,6 +186,11 @@ function M.show_table_picker(actions_list, title, on_select)
                     on_select(selection.value)
                 end
             end)
+            
+            map("i", "<C-c>", actions.close)
+            map("n", "<C-c>", actions.close)
+            map("n", "q", actions.close)
+            
             return true
         end,
     }):find()

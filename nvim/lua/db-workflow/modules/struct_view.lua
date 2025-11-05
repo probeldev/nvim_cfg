@@ -3,7 +3,6 @@ local M = {}
 local config = require("db-workflow.core.config")
 local utils = require("db-workflow.core.utils")
 local result_display = require("db-workflow.ui.result_display")
-local nvim_ui_picker = require("db-workflow.ui.nvim_ui_picker")
 
 function M.show()
     local actions = M.get_available_actions()
