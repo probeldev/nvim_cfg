@@ -13,7 +13,7 @@ function M.show()
     end
     
     -- Используем floating window версию с гарантированной навигацией
-    nvim_ui_picker.show_actions_best(actions, function(selected_action)
+	telescope_menu.show_table_picker(actions, "🗃️  Выберите таблицу", function(selected_action)
         if selected_action then
             utils.notify("Загружаем структуру: " .. selected_action)
             M.run_action(selected_action)

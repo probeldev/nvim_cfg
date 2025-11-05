@@ -7,13 +7,27 @@ local query = require("db-workflow.modules.query")
 local raw_query = require("db-workflow.modules.raw_query")
 local struct_view = require("db-workflow.modules.struct_view")
 local procedure_view = require("db-workflow.modules.procedure_view")
-local main_menu = require("db-workflow.ui.main_menu")
-local nvim_ui_picker = require("db-workflow.ui.nvim_ui_picker")
 local config_loader = require("db-workflow.core.config_loader")
+
+-- Ленивая загрузка telescope_menu чтобы избежать ошибок если Telescope не установлен
+local telescope_menu = nil
+
+local function get_telescope_menu()
+    if not telescope_menu then
+        local ok, tm = pcall(require, "db-workflow.ui.telescope_menu")
+        if ok then
+            telescope_menu = tm
+        else
+            utils.warn("Telescope не установлен. Установите telescope.nvim для улучшенного меню.")
+            return nil
+        end
+    end
+    return telescope_menu
+end
 
 function M.setup(user_config)
     config.setup(user_config)
-    M.setup_commands()
+    M.setup_commands()  -- Исправлено: была опечатка setup_commands
     
     -- Автоматически загружаем конфигурацию при старте
     if config_loader.has_config() then
@@ -46,7 +60,6 @@ function M.setup_commands()
         M.handle_procedure_selection()
     end, { desc = "Показать список процедур" })
 
-
     -- Новая команда для создания запроса
     vim.api.nvim_create_user_command("DbWorkflowNewQuery", function()
         M.create_new_query()
@@ -58,23 +71,40 @@ function M.setup_commands()
     end, { desc = "Создать шаблон конфигурационного файла" })
 end
 
--- Главное меню
+-- Главное меню (с fallback на старый UI если Telescope не доступен)
 function M.show_main_menu()
-    main_menu.show_main_menu(function(selected_action)
-        M.handle_menu_selection(selected_action)
-    end)
+    local tm = get_telescope_menu()
+    if tm then
+        tm.show_main_menu(function(selected_action)
+            M.handle_menu_selection(selected_action)
+        end)
+    else
+        -- Fallback на старый UI
+        local main_menu = require("db-workflow.ui.main_menu")
+        main_menu.show_main_menu(function(selected_action)
+            M.handle_menu_selection(selected_action)
+        end)
+    end
 end
 
--- Меню для структуры БД
+-- Меню для структуры БД (с fallback)
 function M.show_structure_menu()
-    main_menu.show_structure_submenu(function(selected_action)
-        M.handle_structure_selection(selected_action)
-    end)
+    local tm = get_telescope_menu()
+    if tm then
+        tm.show_structure_menu(function(selected_action)
+            M.handle_structure_selection(selected_action)
+        end)
+    else
+        -- Fallback на старый UI
+        local main_menu = require("db-workflow.ui.main_menu")
+        main_menu.show_structure_submenu(function(selected_action)
+            M.handle_structure_selection(selected_action)
+        end)
+    end
 end
 
 -- Обработчик выбора в главном меню
 function M.handle_menu_selection(action)
-    utils.notify(action, vim.log.levels.ERROR)
     if action == "new_query" then
         M.create_new_query()
     elseif action == "run_query" then
@@ -84,23 +114,69 @@ function M.handle_menu_selection(action)
     elseif action == "show_procedure" then
         M.handle_procedure_selection()
     elseif action == "show_structure" then
-        M.show_structure_menu()  -- ВЫЗЫВАЕМ ПОДМЕНЮ, а не создание конфига!
+        M.show_structure_menu()
     elseif action == "create_config" then
         M.create_config_template()
     end
 end
 
 -- Обработчик выбора в меню структуры
-function M.handle_procedure_selection(action)
-    procedure_view.show()
-end
-
--- Обработчик выбора в меню структуры
 function M.handle_structure_selection(action)
     if action == "structure" then
-        struct_view.show()
+        M.show_table_picker(struct_view.get_available_actions, "structure")
     elseif action == "data" then
-        M.show_table_data()
+        M.show_table_picker(struct_view.get_available_actions, "data")
+    end
+end
+
+-- Обработчик выбора процедур
+function M.handle_procedure_selection(action)
+    M.show_table_picker(procedure_view.get_available_actions, "procedure")
+end
+
+-- Универсальная функция для выбора таблиц/процедур
+function M.show_table_picker(get_actions_func, action_type)
+    local actions = get_actions_func()
+    if not actions or #actions == 0 then
+        utils.warn("Нет доступных элементов в базе данных")
+        return
+    end
+    
+    local tm = get_telescope_menu()
+    if tm then
+        local titles = {
+            structure = "🏗️  Выберите таблицу для просмотра структуры",
+            data = "📊 Выберите таблицу для просмотра данных", 
+            procedure = "🔄 Выберите процедуру для просмотра"
+        }
+        
+        tm.show_table_picker(actions, titles[action_type] or "Выберите элемент", function(selected_item)
+            if selected_item then
+                if action_type == "structure" then
+                    struct_view.run_action(selected_item)
+                elseif action_type == "data" then
+                    utils.notify("Загружаем данные таблицы: " .. selected_item)
+                    M.create_table_data_query(selected_item)
+                elseif action_type == "procedure" then
+                    procedure_view.run_action(selected_item)
+                end
+            end
+        end)
+    else
+        -- Fallback на старый UI
+        local nvim_ui_picker = require("db-workflow.ui.nvim_ui_picker")
+        nvim_ui_picker.show_actions_best(actions, function(selected_item)
+            if selected_item then
+                if action_type == "structure" then
+                    struct_view.run_action(selected_item)
+                elseif action_type == "data" then
+                    utils.notify("Загружаем данные таблицы: " .. selected_item)
+                    M.create_table_data_query(selected_item)
+                elseif action_type == "procedure" then
+                    procedure_view.run_action(selected_item)
+                end
+            end
+        end)
     end
 end
 
@@ -115,22 +191,10 @@ function M.create_config_template()
     end
 end
 
--- Показать данные таблицы
+-- Показать данные таблицы (альтернативный вызов)
 function M.show_table_data()
-    local actions = struct_view.get_available_actions()
-    if not actions or #actions == 0 then
-        utils.warn("Нет доступных таблиц в базе данных")
-        return
-    end
-    
-    nvim_ui_picker.show_actions_best(actions, function(selected_table)
-        if selected_table then
-            utils.notify("Загружаем данные таблицы: " .. selected_table)
-            M.create_table_data_query(selected_table)
-        end
-    end)
+    M.show_table_picker(struct_view.get_available_actions, "data")
 end
-
 
 -- Создание запроса для данных таблицы
 function M.create_table_data_query(table_name)
