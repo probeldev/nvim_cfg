@@ -6,6 +6,7 @@ local utils = require("db-workflow.core.utils")
 local query = require("db-workflow.modules.query")
 local raw_query = require("db-workflow.modules.raw_query")
 local struct_view = require("db-workflow.modules.struct_view")
+local procedure_view = require("db-workflow.modules.procedure_view")
 local main_menu = require("db-workflow.ui.main_menu")
 local nvim_ui_picker = require("db-workflow.ui.nvim_ui_picker")
 local config_loader = require("db-workflow.core.config_loader")
@@ -41,6 +42,11 @@ function M.setup_commands()
         M.show_structure_menu()
     end, { desc = "Показать структуры db-workflow" })
 
+    vim.api.nvim_create_user_command("DbWorkflowShowProcedure", function()
+        M.handle_procedure_selection()
+    end, { desc = "Показать список процедур" })
+
+
     -- Новая команда для создания запроса
     vim.api.nvim_create_user_command("DbWorkflowNewQuery", function()
         M.create_new_query()
@@ -75,11 +81,18 @@ function M.handle_menu_selection(action)
         M.execute_query_from_menu()
     elseif action == "run_raw_query" then
         M.execute_raw_query_from_menu()
+    elseif action == "show_procedure" then
+        M.handle_procedure_selection()
     elseif action == "show_structure" then
         M.show_structure_menu()  -- ВЫЗЫВАЕМ ПОДМЕНЮ, а не создание конфига!
     elseif action == "create_config" then
         M.create_config_template()
     end
+end
+
+-- Обработчик выбора в меню структуры
+function M.handle_procedure_selection(action)
+    procedure_view.show()
 end
 
 -- Обработчик выбора в меню структуры
@@ -117,6 +130,7 @@ function M.show_table_data()
         end
     end)
 end
+
 
 -- Создание запроса для данных таблицы
 function M.create_table_data_query(table_name)
@@ -221,6 +235,7 @@ end
 M.execute_query = query.execute
 M.execute_raw_query = raw_query.execute
 M.show_struct = struct_view.show
+M.show_procedure = procedure_view.show
 M.new_query = M.create_new_query
 
 return M
