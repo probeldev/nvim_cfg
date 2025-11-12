@@ -95,11 +95,60 @@ function M.get_procedure_simple(action_name)
         return nil, "Ошибка запроса: " .. tostring(output)
     end
 
+    -- Парсим вертикальный вывод
     local result = string.match(output, "Create Procedure:%s+(.+)")
-	local result2 = string.match(result, "(.*)character_set_client:")
+    if not result then
+        return nil, "Не найден 'Create Procedure' в выводе"
+    end
+    
+    local result2 = string.match(result, "(.*)character_set_client:")
+    if not result2 then
+        -- Если не нашли character_set_client, возвращаем все что после Create Procedure
+        result2 = result
+    end
 
-    -- Возвращаем как есть, без обработки
-    return result2
+    -- Очищаем результат
+    local clean_result = M.clean_procedure_body(result2)
+    
+    return clean_result
+end
+
+-- Очистка тела процедуры
+function M.clean_procedure_body(body)
+    if not body then return nil end
+    
+    -- Убираем лишние пробелы в начале/конце
+    body = vim.trim(body)
+    
+    -- Убираем возможные символы форматирования
+    body = body:gsub("^%*+%s*", ""):gsub("%s*%*+$", "")
+    
+    -- Убираем пустые строки в начале и конце
+    local lines = vim.split(body, "\n")
+    local clean_lines = {}
+    
+    -- Убираем пустые строки в начале
+    local start_index = 1
+    while start_index <= #lines and vim.trim(lines[start_index]) == "" do
+        start_index = start_index + 1
+    end
+    
+    -- Убираем пустые строки в конце
+    local end_index = #lines
+    while end_index >= start_index and vim.trim(lines[end_index]) == "" do
+        end_index = end_index - 1
+    end
+    
+    -- Собираем очищенные строки
+    for i = start_index, end_index do
+        table.insert(clean_lines, lines[i])
+    end
+    
+    if #clean_lines == 0 then
+        return nil
+    end
+    
+    return table.concat(clean_lines, "\n")
 end
 
 return M
