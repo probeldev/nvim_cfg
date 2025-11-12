@@ -22,6 +22,8 @@ function M.setup()
   map("n", "<leader>p", "<cmd>Telescope find_files previewer=false layout_strategy=center<CR>", { desc = "Find files" })
   map("n", "<leader>f", "<cmd>Telescope live_grep<CR>", { desc = "Live grep" })
 
+  map("n", "<leader>d", "<cmd>DbWorkflow<CR>")
+
   -- map("n", "<leader>p", "<cmd>RgFiles<CR>", { desc = "Find files" })
   -- map("n", "<leader>f", "<cmd>Rg<CR>", { desc = "Live grep" })
 
