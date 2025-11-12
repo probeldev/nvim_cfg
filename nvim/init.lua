@@ -52,7 +52,6 @@ vim.fn['plug#']('romgrk/barbar.nvim')
 vim.fn['plug#']('nvim-telescope/telescope.nvim', { ['tag'] = '0.1.6' })
 vim.fn['plug#']('tomtom/tcomment_vim')
 vim.fn['plug#']('akinsho/toggleterm.nvim', { ['tag'] = '*' })
-vim.fn['plug#']('nvim-lualine/lualine.nvim')
 vim.fn['plug#']('projekt0n/github-nvim-theme')
 vim.fn['plug#']('dstein64/nvim-scrollview')
 
@@ -65,6 +64,9 @@ vim.fn['plug#']('karb94/neoscroll.nvim')
 
 
 vim.fn['plug#']('MeanderingProgrammer/render-markdown.nvim')
+vim.fn['plug#']('dhruvasagar/vim-table-mode')
+
+
 vim.fn['plug#end']()
 
 -- Базовые настройки редактора
@@ -74,6 +76,9 @@ vim.opt.tabstop = 4                          -- Размер табуляции
 vim.opt.shiftwidth = 4                       -- Размер отступа
 vim.opt.cursorline = true                    -- Подсветка текущей строки
 vim.opt.clipboard = 'unnamedplus'            -- Использовать системный буфер обмена
+
+vim.opt.laststatus = 0 -- отключает сатусбар
+
 
 vim.opt.list = true -- Включает отображение скрытых символов
 vim.opt.listchars = {
@@ -89,9 +94,9 @@ vim.opt.listchars = {
 vim.opt.background = 'light'
 vim.cmd('colorscheme github_light')
 
+
 -- Настройка плагинов
 require('toggleterm').setup()
-require('lualine').setup()
 
 -- Настройка nvim-tree
 require('nvim-tree').setup({
@@ -119,6 +124,7 @@ require('barbecue').setup()
 require('stcursorword').setup()
 require('neoscroll').setup()
 require('telescope').setup()
+
 require('render-markdown').setup({})
 
 -- Подключение пользовательских модулей
