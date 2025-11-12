@@ -2,7 +2,8 @@ local M = {}
 
 local config = require("db-workflow.core.config")
 local utils = require("db-workflow.core.utils")
-local result_display = require("db-workflow.ui.result_display")
+local structure_display = require("db-workflow.ui.structure_display")  -- Новый дисплей
+local db_executor = require("db-workflow.core.db_executor")
 
 function M.show()
     local actions = M.get_available_actions()
@@ -11,8 +12,7 @@ function M.show()
         return
     end
     
-    -- Используем floating window версию с гарантированной навигацией
-	telescope_menu.show_table_picker(actions, "🗃️  Выберите таблицу", function(selected_action)
+    telescope_menu.show_table_picker(actions, "🗃️  Выберите таблицу", function(selected_action)
         if selected_action then
             utils.notify("Загружаем структуру: " .. selected_action)
             M.run_action(selected_action)
@@ -22,21 +22,31 @@ end
 
 -- Экспортируем функцию получения доступных действий
 function M.get_available_actions()
-    local menu_output, err = utils.execute_system_command(config.get_command() .. ' -tables', "")
-    utils.notify(config.get_command() .. ' -tables', vim.log.levels.ERROR)
-    local menu_lines = utils.split_lines(menu_output)
+    -- Проверяем доступность mysql
+    if not utils.is_mysql_available() then
+        utils.error("Утилита mysql не найдена. Проверьте настройки mysql_path в конфигурации.")
+        return {}
+    end
+
+    local db_config = require("db-workflow.core.config_loader").load_config()
+    local sql_query = "SHOW TABLES"
+    
+    local success, output = pcall(db_executor.execute_query, sql_query, { raw = true })
+    if not success or not output then
+        utils.error("Ошибка получения списка таблиц: " .. tostring(output))
+        return {}
+    end
     
     local actions = {}
-    for _, line in ipairs(menu_lines) do
-        if line ~= '' then
-            local action_name = line:match('^%s*(%S+)%s*$')
-            if action_name then
-                table.insert(actions, {
-                    value = action_name,
-                    display = action_name,
-                    ordinal = action_name
-                })
-            end
+    for line in output:gmatch("[^\r\n]+") do
+        line = vim.trim(line)
+        if line ~= "" and line ~= db_config.dbname then  -- Пропускаем имя базы данных
+            local table_name = line:gsub("^%s*'|'%s*$", "")  -- Убираем кавычки если есть
+            table.insert(actions, {
+                value = table_name,
+                display = table_name,
+                ordinal = table_name
+            })
         end
     end
     
@@ -44,16 +54,23 @@ function M.get_available_actions()
 end
 
 function M.run_action(action_name)
-    local command = config.get_command() .. " -table=" .. action_name
-    local output, err = utils.execute_system_command(command, "")
+    -- Проверяем доступность mysql
+    if not utils.is_mysql_available() then
+        utils.error("Утилита mysql не найдена. Проверьте настройки mysql_path в конфигурации.")
+        return
+    end
+
+    -- Используем DESCRIBE для получения структуры таблицы
+    local sql_query = string.format("DESCRIBE `%s`", action_name)
     
-    if not output then
-        utils.error("Ошибка выполнения: " .. (err or "неизвестная ошибка"))
+    local success, output = pcall(db_executor.execute_query, sql_query, { format = true })
+    if not success or not output then
+        utils.error("Ошибка получения структуры таблицы: " .. tostring(output))
         return
     end
     
-    -- Используем специальную функцию для структур (полноэкранный режим)
-    result_display.show_structure(output, action_name, "sql")
+    -- Используем НОВУЮ функцию для структур (без сплита)
+    structure_display.show_structure(output, action_name, "sql")
 end
 
 return M
