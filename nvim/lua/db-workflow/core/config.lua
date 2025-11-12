@@ -2,7 +2,8 @@ local M = {}
 
 -- Конфигурация по умолчанию
 local default_config = {
-    command = "/Users/sergey/work/opensource/db-workflow/main",
+    -- command = "/Users/sergey/work/opensource/db-workflow/main",  -- Удалили эту строку
+    mysql_path = "mysql",  -- Путь к утилите mysql
     result_buffer_name = "DB_Workflow_Result",
     sidescroll = 1,
     sidescrolloff = 5,
@@ -21,7 +22,12 @@ function M.get()
 end
 
 function M.get_command()
-    return config.command
+    -- Удалили эту функцию, т.к. больше не используем внешнюю утилиту
+    error("Внешняя утилита больше не используется")
+end
+
+function M.get_mysql_path()
+    return config.mysql_path
 end
 
 function M.get_buffer_settings()

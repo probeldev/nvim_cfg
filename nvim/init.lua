@@ -139,7 +139,9 @@ require("ripgrep").setup()
 
 
 -- Загрузка плагина
-require('db-workflow').setup()
+require('db-workflow').setup({
+    mysql_path = "docker exec -t mysql mysql"  -- для Docker или нестандартного расположения
+})
 
 require("remove-completed-tasks")
 

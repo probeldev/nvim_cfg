@@ -2,12 +2,20 @@ local M = {}
 
 -- Ленивая загрузка config_loader чтобы избежать циклической зависимости
 local config_loader = nil
+local db_executor = nil
 
 local function get_config_loader()
     if not config_loader then
         config_loader = require("db-workflow.core.config_loader")
     end
     return config_loader
+end
+
+local function get_db_executor()
+    if not db_executor then
+        db_executor = require("db-workflow.core.db_executor")
+    end
+    return db_executor
 end
 
 function M.get_visual_selection()
@@ -17,21 +25,7 @@ function M.get_visual_selection()
     return table.concat(lines, "\n"), #lines
 end
 
-function M.execute_system_command(full_command, input)
-    -- Добавляем параметры из конфигурации к команде
-    local config_args = get_config_loader().get_command_args()
-    local full_command_with_config = full_command .. " " .. config_args
-
-    M.notify(full_command_with_config, vim.log.levels.ERROR)
-    
-    local output = vim.fn.system(full_command_with_config .. " ", input)
-    
-    if vim.v.shell_error ~= 0 then
-        return nil, "Ошибка выполнения команды: код " .. vim.v.shell_error
-    end
-    
-    return output, nil
-end
+-- Удалили старую функцию execute_system_command
 
 function M.validate_selection(selected_text)
     if selected_text == "" then
@@ -69,6 +63,16 @@ function M.get_config_info()
     else
         return "❌ Конфигурационный файл не найден"
     end
+end
+
+-- Проверка доступности mysql
+function M.is_mysql_available()
+    return get_db_executor().check_mysql_available()
+end
+
+-- Проверка подключения к БД
+function M.test_db_connection()
+    return get_db_executor().test_connection()
 end
 
 return M

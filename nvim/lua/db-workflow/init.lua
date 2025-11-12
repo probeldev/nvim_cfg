@@ -34,6 +34,11 @@ function M.setup_commands()
         M.show_main_menu()
     end, { desc = "Главное меню DB Workflow" })
 
+    -- Команда для проверки подключения
+    vim.api.nvim_create_user_command("DbWorkflowTestConnection", function()
+        M.test_db_connection()
+    end, { desc = "Проверить подключение к БД" })
+
     -- Индивидуальные команды
     vim.api.nvim_create_user_command("DbWorkflowRunQueryRaw", function(opts)
         raw_query.execute(opts)
@@ -232,31 +237,6 @@ function M.create_new_query()
     utils.notify("✅ Создан новый SQL запрос")
 end
 
--- Функции для вызова из меню с проверкой выделения
-function M.execute_query_from_menu()
-    local selected_text, line_count = utils.get_visual_selection()
-    local is_valid, error_msg = utils.validate_selection(selected_text)
-    
-    if not is_valid then
-        utils.warn("Сначала выделите SQL запрос для выполнения")
-        return
-    end
-    
-    query.execute({})
-end
-
-function M.execute_raw_query_from_menu()
-    local selected_text, line_count = utils.get_visual_selection()
-    local is_valid, error_msg = utils.validate_selection(selected_text)
-    
-    if not is_valid then
-        utils.warn("Сначала выделите SQL запрос для выполнения")
-        return
-    end
-    
-    raw_query.execute({})
-end
-
 -- Создание шаблона запроса для создания таблицы
 function M.create_new_table_query()
     -- Генерируем уникальное имя для буфера
@@ -298,11 +278,52 @@ function M.create_new_table_query()
     utils.notify("✅ Создан шаблон запроса создания таблицы")
 end
 
+-- Функции для вызова из меню с проверкой выделения
+function M.execute_query_from_menu()
+    local selected_text, line_count = utils.get_visual_selection()
+    local is_valid, error_msg = utils.validate_selection(selected_text)
+    
+    if not is_valid then
+        utils.warn("Сначала выделите SQL запрос для выполнения")
+        return
+    end
+    
+    query.execute({})
+end
+
+function M.execute_raw_query_from_menu()
+    local selected_text, line_count = utils.get_visual_selection()
+    local is_valid, error_msg = utils.validate_selection(selected_text)
+    
+    if not is_valid then
+        utils.warn("Сначала выделите SQL запрос для выполнения")
+        return
+    end
+    
+    raw_query.execute({})
+end
+
+-- Проверка подключения к БД
+function M.test_db_connection()
+    if not utils.is_mysql_available() then
+        utils.error("Утилита mysql не найдена. Проверьте настройки mysql_path в конфигурации.")
+        return
+    end
+    
+    local success, message = utils.test_db_connection()
+    if success then
+        utils.notify("✅ Подключение к БД успешно: " .. message)
+    else
+        utils.error("❌ Ошибка подключения: " .. message)
+    end
+end
+
 -- API для внешнего использования
 M.execute_query = query.execute
 M.execute_raw_query = raw_query.execute
 M.show_struct = struct_view.show
 M.show_procedure = procedure_view.show
 M.new_query = M.create_new_query
+M.new_table = M.create_new_table_query
 
 return M
