@@ -95,6 +95,9 @@ function M.get_procedure_simple(action_name)
         return nil, "Ошибка запроса: " .. tostring(output)
     end
 
+    -- Очищаем символы возврата каретки сразу
+    output = output:gsub("\r", "")
+
     -- Парсим вертикальный вывод
     local result = string.match(output, "Create Procedure:%s+(.+)")
     if not result then
