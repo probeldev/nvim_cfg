@@ -3,41 +3,52 @@ local M = {}
 local buffer_cache = {}
 local scroll_settings = {}
 
-function M.create_result_buffer(buffer_name, filetype)
-    -- Проверяем, существует ли уже буфер с таким именем
-    local existing_buf = vim.fn.bufnr(buffer_name)
-    if existing_buf ~= -1 and vim.api.nvim_buf_is_valid(existing_buf) then
-        -- Буфер существует, переключаемся на него
-        local existing_win = M.find_window_by_buffer(existing_buf)
-        if existing_win then
-            vim.api.nvim_set_current_win(existing_win)
-        else
-            -- Буфер есть, но окна нет - создаем новое окно
-            vim.cmd("edit " .. vim.fn.fnameescape(buffer_name))
+-- Закрываем ВСЕ буферы, начинающиеся на db_workflow://
+function M.close_all_result_buffers()
+    local windows = vim.api.nvim_list_wins()
+    for _, win in ipairs(windows) do
+        local bufnr = vim.api.nvim_win_get_buf(win)
+        local bufname = vim.api.nvim_buf_get_name(bufnr)
+        if bufname:match("^db_workflow://") then
+            vim.api.nvim_win_close(win, true)
+            vim.api.nvim_buf_delete(bufnr, { force = true })
         end
-        return existing_buf, vim.api.nvim_get_current_win()
     end
+end
 
-    -- Сохраняем текущие настройки скролла
-    scroll_settings[buffer_name] = {
-        sidescroll = vim.o.sidescroll,
-        sidescrolloff = vim.o.sidescrolloff
-    }
+function M.create_result_buffer(buffer_name, filetype)
+    -- Закрываем ВСЕ предыдущие буферы результата
+    M.close_all_result_buffers()
 
-    -- Создаем новый буфер (не сплитим, а заменяем текущее окно)
-    vim.cmd("edit " .. vim.fn.fnameescape(buffer_name))
-    local buf = vim.api.nvim_get_current_buf()
-    local win = vim.api.nvim_get_current_win()
+    -- Создаём новый буфер для результата
+    local buf = vim.api.nvim_create_buf(false, false)  -- обычный буфер, не scratch
 
     -- Настраиваем буфер
-    vim.bo[buf].buftype = "nofile"
+    vim.bo[buf].buftype = ""
     vim.bo[buf].bufhidden = "hide"
     vim.bo[buf].swapfile = false
     vim.bo[buf].filetype = filetype or "text"
     vim.bo[buf].modifiable = true
     vim.bo[buf].readonly = false
 
-    -- Настройки окна для горизонтального скролла
+    -- Устанавливаем имя буфера
+    vim.api.nvim_buf_set_name(buf, buffer_name)
+
+    -- Создаём окно внизу
+    local height = math.min(math.floor(vim.o.lines / 3), 15)
+    local opts = {
+        relative = "editor",
+        row = vim.o.lines - height,
+        col = 0,
+        width = vim.o.columns,
+        height = height,
+        style = "minimal",
+        border = "single",
+    }
+
+    local win = vim.api.nvim_open_win(buf, false, opts)  -- не фокусируем
+
+    -- Отключаем перенос строк
     vim.wo[win].wrap = false
     vim.wo[win].linebreak = false
 
@@ -62,8 +73,7 @@ function M.find_window_by_buffer(bufnr)
 end
 
 function M.configure_buffer_size(win, content_lines, config)
-    -- Для полноэкранного режима не меняем размер
-    -- Можно добавить авто-размер если нужно, но пока оставим полноэкранный
+    -- Можно расширить логику динамической высоты, если нужно
 end
 
 function M.setup_buffer_mappings(buf)
@@ -84,8 +94,6 @@ function M.setup_buffer_mappings(buf)
         on_detach = function()
             local buffer_info = buffer_cache[vim.api.nvim_buf_get_name(buf)]
             if buffer_info and buffer_info.scroll_settings then
-                vim.o.sidescroll = buffer_info.scroll_settings.sidescroll
-                vim.o.sidescrolloff = buffer_info.scroll_settings.sidescrolloff
                 buffer_cache[vim.api.nvim_buf_get_name(buf)] = nil
             end
         end

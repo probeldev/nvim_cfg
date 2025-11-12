@@ -7,14 +7,16 @@ local utils = require("db-workflow.core.utils")
 function M.show(output, title_suffix, filetype)
     local buffer_settings = config.get_buffer_settings()
     
-    local buffer_name = "db_workflow://" .. (title_suffix or "result")
+    -- Генерируем уникальное имя буфера с timestamp
+    local timestamp = os.date("%Y%m%d_%H%M%S")
+    local buffer_name = "db_workflow://" .. (title_suffix or "result") .. "_" .. timestamp
     
     -- Создаем или переключаемся на буфер
     local buf, win = buffer_manager.create_result_buffer(buffer_name, filetype)
     
     -- Подготавливаем содержимое с заголовком
-    local timestamp = os.date("%H:%M:%S")
-    local header = string.format("=== %s (generated at %s) ===", title_suffix or "Result", timestamp)
+    local timestamp_display = os.date("%H:%M:%S")
+    local header = string.format("=== %s (generated at %s) ===", title_suffix or "Result", timestamp_display)
     local lines = utils.split_lines(output)
     
     -- Вставляем заголовок в начало
@@ -41,16 +43,16 @@ function M.show(output, title_suffix, filetype)
     return buf, win
 end
 
--- Специальная функция для показа структур (полноэкранный режим)
 function M.show_structure(output, table_name, filetype)
-    local buffer_name = "db_workflow://structure/" .. table_name
+    local timestamp = os.date("%Y%m%d_%H%M%S")
+    local buffer_name = "db_workflow://structure/" .. table_name .. "_" .. timestamp
     
     -- Создаем или переключаемся на буфер
     local buf, win = buffer_manager.create_result_buffer(buffer_name, filetype or "sql")
     
     -- Подготавливаем содержимое
-    local timestamp = os.date("%H:%M:%S")
-    local header = string.format("=== Structure: %s (loaded at %s) ===", table_name, timestamp)
+    local timestamp_display = os.date("%H:%M:%S")
+    local header = string.format("=== Structure: %s (loaded at %s) ===", table_name, timestamp_display)
     local lines = utils.split_lines(output)
     
     -- Вставляем красивый заголовок
