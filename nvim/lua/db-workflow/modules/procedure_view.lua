@@ -94,9 +94,12 @@ function M.get_procedure_simple(action_name)
     if not success or not output then
         return nil, "Ошибка запроса: " .. tostring(output)
     end
-    
+
+    local result = string.match(output, "Create Procedure:%s+(.+)")
+	local result2 = string.match(result, "(.*)character_set_client:")
+
     -- Возвращаем как есть, без обработки
-    return output
+    return result2
 end
 
 return M
