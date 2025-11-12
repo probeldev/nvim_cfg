@@ -51,6 +51,11 @@ function M.setup_commands()
         M.handle_procedure_selection()
     end, { desc = "Показать список процедур" })
 
+    -- Новая команда для создания таблицы
+    vim.api.nvim_create_user_command("DbWorkflowNewTable", function()
+        M.create_new_table_query()
+    end, { desc = "Создать шаблон запроса создания таблицы" })
+
     -- Новая команда для создания запроса
     vim.api.nvim_create_user_command("DbWorkflowNewQuery", function()
         M.create_new_query()
@@ -80,14 +85,16 @@ end
 function M.handle_menu_selection(action)
     if action == "new_query" then
         M.create_new_query()
+    elseif action == "new_table" then
+        M.create_new_table_query()
     elseif action == "run_query" then
         M.execute_query_from_menu()
     elseif action == "run_raw_query" then
         M.execute_raw_query_from_menu()
-    elseif action == "show_procedure" then
-        M.handle_procedure_selection()
     elseif action == "show_structure" then
         M.show_structure_menu()
+    elseif action == "show_procedure" then
+        M.handle_procedure_selection()
     elseif action == "create_config" then
         M.create_config_template()
     end
@@ -248,6 +255,47 @@ function M.execute_raw_query_from_menu()
     end
     
     raw_query.execute({})
+end
+
+-- Создание шаблона запроса для создания таблицы
+function M.create_new_table_query()
+    -- Генерируем уникальное имя для буфера
+    local timestamp = os.date("%Y%m%d_%H%M%S")
+    local buffer_name = string.format("db_workflow://table/new_table_%s.sql", timestamp)
+    
+    -- Создаем новый буфер
+    vim.cmd("edit " .. vim.fn.fnameescape(buffer_name))
+    local buf = vim.api.nvim_get_current_buf()
+    
+    -- Настраиваем буфер для SQL
+    vim.bo[buf].filetype = "sql"
+    vim.bo[buf].buftype = ""
+    vim.bo[buf].bufhidden = "hide"
+    vim.bo[buf].swapfile = false
+    vim.bo[buf].modifiable = true
+    vim.bo[buf].readonly = false
+    
+    -- Добавляем шаблон создания таблицы
+    local template = {
+        "-- Создание новой таблицы",
+        "-- Создан: " .. os.date("%Y-%m-%d %H:%M:%S"),
+        "",
+        "CREATE TABLE table_name (",
+        "    id INT AUTO_INCREMENT PRIMARY KEY,",
+        "    -- Добавьте свои колонки здесь",
+        "    -- column_name TYPE NOT NULL DEFAULT value,",
+        "    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,",
+        "    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP",
+        ");",
+        ""
+    }
+    
+    vim.api.nvim_buf_set_lines(buf, 0, -1, false, template)
+    
+    -- Устанавливаем курсор на место для редактирования
+    vim.api.nvim_win_set_cursor(0, {6, 4})  -- Перемещаем курсор к строке с комментарием
+    
+    utils.notify("✅ Создан шаблон запроса создания таблицы")
 end
 
 -- API для внешнего использования

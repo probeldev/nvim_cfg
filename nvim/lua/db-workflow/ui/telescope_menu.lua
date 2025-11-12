@@ -18,34 +18,40 @@ M.main_menu_items = {
         ordinal = "1_new_query"
     },
     {
+        value = "new_table",
+        display = "📋 Создать таблицу",
+        description = "Создать шаблон запроса для создания таблицы",
+        ordinal = "2_new_table"
+    },
+    {
         value = "run_query", 
         display = "📝 Выполнить запрос",
         description = "Выполнить SQL запрос с форматированием",
-        ordinal = "2_run_query"
+        ordinal = "3_run_query"
     },
     {
         value = "run_raw_query",
         display = "⚡ Выполнить запрос (RAW)",
         description = "Выполнить SQL запрос без форматирования", 
-        ordinal = "3_run_raw_query"
+        ordinal = "4_run_raw_query"
     },
     {
         value = "show_structure",
         display = "🏗️  Показать структуру БД",
         description = "Показать структуры и данные таблиц БД",
-        ordinal = "4_show_structure"
+        ordinal = "5_show_structure"
     },
     {
         value = "show_procedure", 
         display = "🔄 Показать хранимые процедуры",
         description = "Показать структуры хранимых процедур",
-        ordinal = "5_show_procedure"
+        ordinal = "6_show_procedure"
     },
     {
         value = "create_config",
         display = "⚙️  Создать конфиг",
         description = "Создать шаблон конфигурационного файла",
-        ordinal = "6_create_config"
+        ordinal = "7_create_config"
     }
 }
 
