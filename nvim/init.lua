@@ -32,7 +32,7 @@ end
 
 create_directories()
 
-
+vim.o.grepprg = "rg --vimgrep"
 
 -- Отключить все возможности Tree-sitter
 vim.treesitter.start = function() end
