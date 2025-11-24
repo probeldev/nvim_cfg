@@ -66,6 +66,8 @@ vim.fn['plug#']('karb94/neoscroll.nvim')
 vim.fn['plug#']('MeanderingProgrammer/render-markdown.nvim')
 vim.fn['plug#']('dhruvasagar/vim-table-mode')
 
+vim.fn['plug#']('David-Kunz/gen.nvim')
+
 
 vim.fn['plug#end']()
 
@@ -104,6 +106,12 @@ require('nvim-tree').setup({
     enable = true,
     show_on_dirs = true,
   },
+  sync_root_with_cwd = true,
+  respect_buf_cwd = true,
+  update_focused_file = {
+    enable = true,
+    update_root = true
+  },
 })
 
 -- Настройка barbar
@@ -118,6 +126,27 @@ require('barbar').setup({
     Outline = { event = 'BufWinLeave', text = 'symbols-outline', align = 'right' },
   },
 })
+
+
+require('gen').setup({
+ 		-- model = "llama3.1:8b", -- The default model to use.
+ 		model = "qwen2.5-coder:14b", -- The default model to use.
+ 		-- model = "qwen3:14b", -- The default model to use.
+ 		-- model = "codellama:7b", -- The default model to use.
+		-- model = "deepseek-r1:1.5b", -- The default model to use.
+ 		-- model = "deepseek-r1:8b-llama-distill-q4_K_M", -- The default model to use.
+        display_mode = "horizontal-split", -- The display mode. Can be "float" or "split" or "horizontal-split" or "vertical-split".
+        show_prompt = true, -- Shows the prompt submitted to Ollama. Can be true (3 lines) or "full".
+        show_model = true, -- Displays which model you are using at the beginning of your chat session.
+        no_auto_close = true, -- Never closes the window automatically.
+})
+
+require('gen').prompts['Summarize'] = {
+  prompt = "Отвечай на русском языке! Summarize the following text:\n$text"
+}
+require('gen').prompts['Review_Code'] = {
+  prompt = "Отвечай на русском языке! Не выводи исправленный код. Review the following code and make concise suggestions:\n```$filetype\n$text\n```",
+}
 
 -- Дополнительные настройки плагинов
 require('barbecue').setup()
@@ -145,3 +174,10 @@ require('db-workflow').setup({
 
 require("remove-completed-tasks")
 
+
+vim.cmd [[
+  highlight Normal guibg=none
+  highlight NonText guibg=none
+  highlight Normal ctermbg=none
+  highlight NonText ctermbg=none
+]]
