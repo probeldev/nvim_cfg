@@ -112,6 +112,43 @@ require('nvim-tree').setup({
     enable = true,
     update_root = true
   },
+  renderer = {
+	  indent_width = 3,
+	  icons = {
+		  show = {
+			  hidden = true
+		  },
+		  git_placement = "after",
+		  bookmarks_placement = "after",
+		  symlink_arrow = " -> ",
+		  glyphs = {
+			  folder = {
+				  arrow_closed = " ",
+				  arrow_open = " ",
+				  default = "",
+				  open = "",
+				  empty = "",
+				  empty_open = "",
+				  symlink = "",
+				  symlink_open = ""
+			  },
+			  default = "󱓻",
+			  symlink = "󱓻",
+			  bookmark = "",
+			  modified = "",
+			  hidden = "󱙝",
+			  git = {
+				  unstaged = "×",
+				  staged = "",
+				  unmerged = "󰧾",
+				  untracked = "",
+				  renamed = "",
+				  deleted = "",
+				  ignored = "∅"
+			  }
+		  }
+	  }
+  }
 })
 
 -- Настройка barbar
