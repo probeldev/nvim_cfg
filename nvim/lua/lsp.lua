@@ -20,7 +20,8 @@ vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
 vim.lsp.enable({ 
 	'gopls',
 	'golangci_lint_ls',
-	'vtsls'
+	'vtsls',
+	'ra'
 })
 vim.lsp.set_log_level("debug")
 

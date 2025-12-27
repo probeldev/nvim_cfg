@@ -55,6 +55,9 @@ vim.fn['plug#']('akinsho/toggleterm.nvim', { ['tag'] = '*' })
 vim.fn['plug#']('projekt0n/github-nvim-theme')
 vim.fn['plug#']('dstein64/nvim-scrollview')
 
+
+
+
 vim.fn['plug#']('utilyre/barbecue.nvim')
 vim.fn['plug#']('SmiteshP/nvim-navic')
 
@@ -191,14 +194,13 @@ require('stcursorword').setup()
 require('neoscroll').setup()
 require('telescope').setup()
 
+
 require('render-markdown').setup({})
 
 -- Подключение пользовательских модулей
 require("hotkey").setup()
 require("lsp").setup()
 require("customtitle").setup()
-
-
 
 
 
