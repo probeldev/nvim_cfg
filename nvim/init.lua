@@ -140,8 +140,9 @@ require('barbar').setup({
 
 require('gen').setup({
  		-- model = "llama3.1:8b", -- The default model to use.
- 		model = "qwen2.5-coder:14b", -- The default model to use.
- 		-- model = "qwen3:14b", -- The default model to use.
+ 		-- model = "qwen2.5-coder:14b", -- The default model to use.
+ 		model = "qwen2.5-coder:7b", -- The default model to use.
+ 		-- model = "qwen3:8b", -- The default model to use.
  		-- model = "codellama:7b", -- The default model to use.
 		-- model = "deepseek-r1:1.5b", -- The default model to use.
  		-- model = "deepseek-r1:8b-llama-distill-q4_K_M", -- The default model to use.

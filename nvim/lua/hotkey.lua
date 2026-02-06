@@ -48,6 +48,11 @@ function M.setup()
   map({ "n", "v" }, "<C-e>", "$", { desc = "Move to end of line" })
 
   vim.keymap.set('i', '<C-Space>', '<Nop>', { silent = true })
+
+
+  --  предыдущая из гита, следующая из гита
+  map("n", "gj", "<cmd>Gitsigns next_hunk<CR>")
+  map("n", "gk", "<cmd>Gitsigns prev_hunk<CR>")
 end
 
 return M
