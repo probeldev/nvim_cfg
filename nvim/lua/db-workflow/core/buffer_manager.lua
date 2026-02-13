@@ -30,25 +30,33 @@ function M.create_result_buffer(buffer_name, filetype)
     vim.bo[buf].filetype = filetype or "text"
     vim.bo[buf].modifiable = true
     vim.bo[buf].readonly = false
+    vim.bo[buf].fileencoding = "utf-8"
 
     -- Устанавливаем имя буфера
     vim.api.nvim_buf_set_name(buf, buffer_name)
 
-    -- Создаём окно внизу
-    local height = math.min(math.floor(vim.o.lines / 3), 15)
-    local opts = {
-        relative = "editor",
-        row = vim.o.lines - height,
-        col = 0,
-        width = vim.o.columns,
-        height = height,
-        style = "minimal",
-        border = "single",
-    }
+    -- Получаем текущее окно
+    local current_win = vim.api.nvim_get_current_win()
 
-    local win = vim.api.nvim_open_win(buf, false, opts)  -- не фокусируем
+    -- Получаем размеры текущего окна
+    local height = vim.api.nvim_win_get_height(current_win)
 
-    -- Отключаем перенос строк
+    -- Вычисляем высоту нового окна (примерно половина оставшегося места или фиксированное значение)
+    local new_height = math.max(10, math.floor(height / 2))
+
+    -- Создаём командой сплит окно под текущим
+    vim.cmd(string.format('botright split'))
+
+    -- Получаем новое окно
+    local win = vim.api.nvim_get_current_win()
+
+    -- Устанавливаем высоту нового окна
+    vim.api.nvim_win_set_height(win, new_height)
+
+    -- Связываем буфер с окном
+    vim.api.nvim_win_set_buf(win, buf)
+
+    -- Отключаем перенос строк для прокрутки длинных строк
     vim.wo[win].wrap = false
     vim.wo[win].linebreak = false
 

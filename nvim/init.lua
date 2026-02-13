@@ -62,6 +62,7 @@ vim.fn['plug#']('dhruvasagar/vim-table-mode')
 vim.fn['plug#']('David-Kunz/gen.nvim')
 
 
+
 vim.fn['plug#end']()
 
 
@@ -191,3 +192,5 @@ vim.cmd [[
   highlight Normal ctermbg=none
   highlight NonText ctermbg=none
 ]]
+
+

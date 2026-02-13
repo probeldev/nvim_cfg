@@ -20,6 +20,7 @@ function M.show_structure(output, table_name, filetype)
     vim.bo[buf].filetype = filetype or "sql"
     vim.bo[buf].modifiable = true
     vim.bo[buf].readonly = false
+    vim.bo[buf].fileencoding = "utf-8"
 
     -- Устанавливаем имя буфера
     vim.api.nvim_buf_set_name(buf, buffer_name)
