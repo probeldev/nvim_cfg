@@ -63,6 +63,9 @@ vim.fn['plug#']('David-Kunz/gen.nvim')
 
 
 
+vim.fn['plug#']('folke/snacks.nvim') -- for opencode
+vim.fn['plug#']('nickjvandyke/opencode.nvim')
+
 vim.fn['plug#end']()
 
 
@@ -169,6 +172,8 @@ require('telescope').setup()
 
 require('render-markdown').setup({})
 
+require("opencode")
+
 -- Подключение пользовательских модулей
 require("hotkey").setup()
 require("ui").setup()
@@ -192,5 +197,6 @@ vim.cmd [[
   highlight Normal ctermbg=none
   highlight NonText ctermbg=none
 ]]
+
 
 
