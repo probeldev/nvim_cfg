@@ -189,6 +189,7 @@ require('db-workflow').setup({
 })
 
 require("remove-completed-tasks")
+local show_my_command = require("show-my-command")
 
 
 vim.cmd [[

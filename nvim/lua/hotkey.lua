@@ -70,6 +70,13 @@ function M.setup()
     -- You may want these if you use the opinionated `<C-a>` and `<C-x>` keymaps above — otherwise consider `<leader>o…` (and remove terminal mode from the `toggle` keymap)
     map("n", "+", "<C-a>", { desc = "Increment under cursor", noremap = true })
     map("n", "-", "<C-x>", { desc = "Decrement under cursor", noremap = true })
+
+
+
+	-- lua/show-my-command.lua
+	vim.keymap.set("n", "<leader>c", ":ShowMyCommands<CR>", { desc = "Показать мои команды" })
+	vim.keymap.set("v", "<leader>c", ":ShowMyCommands<CR>", { desc = "Показать мои команды" })
+
 end
 
 return M
