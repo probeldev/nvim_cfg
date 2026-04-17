@@ -20,6 +20,12 @@ local my_commands = {
 				require("opencode").toggle()
 			end
 		},
+		{
+			name = "LSP: Show symbols",
+			func = function()
+				require("telescope.builtin").lsp_document_symbols({ symbol_width = 50 })
+			end
+		},
 	},
 }
 
@@ -58,6 +64,7 @@ function M.show_my_commands(forced_mode, visual_marks)
 			height = 0.4,
 			prompt_position = "top",
 		},
+		sorting_strategy = "ascending",
 		border = true,
 		borderchars = { "─", "│", "─", "│", "┌", "┐", "┘", "└" },
 		finder = finders.new_table {
