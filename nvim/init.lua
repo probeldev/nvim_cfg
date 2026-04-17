@@ -172,6 +172,74 @@ require('telescope').setup()
 
 require('render-markdown').setup({})
 
+-- Хелпер для float окна opencode
+local opencode_float_opts = {
+  relative = "editor",
+  row = math.floor(vim.o.lines * 0.1),
+  col = math.floor(vim.o.columns * 0.1),
+  width = math.floor(vim.o.columns * 0.8),
+  height = math.floor(vim.o.lines * 0.8),
+  style = "minimal",
+  border = "rounded",
+}
+
+vim.g.opencode_opts = {
+  server = {
+    start = function()
+      local term = require("opencode.terminal")
+      -- Переопределяем open временно, чтобы курсор оставался в float окне
+      local orig_open = term.open
+      term.open = function(cmd, opts)
+        if term.bufnr ~= nil and vim.api.nvim_buf_is_valid(term.bufnr) then
+          return
+        end
+        opts = opts or opencode_float_opts
+        term.bufnr = vim.api.nvim_create_buf(false, false)
+        term.winid = vim.api.nvim_open_win(term.bufnr, true, opts)
+        vim.api.nvim_create_autocmd("ExitPre", {
+          once = true,
+          callback = function()
+            term.close()
+          end,
+        })
+        term.setup(term.winid)
+        vim.fn.jobstart(cmd, {
+          term = true,
+          on_exit = function()
+            term.close()
+          end,
+        })
+        -- НЕ возвращаем курсор назад — оставляем в float окне
+        -- Небольшая задержка, чтобы opencode успел инициализироваться
+        vim.defer_fn(function()
+          if term.winid and vim.api.nvim_win_is_valid(term.winid) then
+            vim.api.nvim_set_current_win(term.winid)
+            vim.cmd("startinsert")
+          end
+        end, 100)
+      end
+      term.open("opencode --port", opencode_float_opts)
+      term.open = orig_open
+    end,
+    stop = function()
+      require("opencode.terminal").close()
+    end,
+    toggle = function()
+      local term = require("opencode.terminal")
+      if term.winid ~= nil and vim.api.nvim_win_is_valid(term.winid) then
+        vim.api.nvim_win_hide(term.winid)
+        term.winid = nil
+      elseif term.bufnr ~= nil and vim.api.nvim_buf_is_valid(term.bufnr) then
+        term.winid = vim.api.nvim_open_win(term.bufnr, true, opencode_float_opts)
+        vim.cmd("startinsert")
+      else
+        -- Вызываем кастомный start
+        vim.g.opencode_opts.server.start()
+      end
+    end,
+  },
+}
+
 require("opencode")
 
 -- Подключение пользовательских модулей
