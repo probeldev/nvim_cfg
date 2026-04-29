@@ -21,6 +21,18 @@ local my_commands = {
 			end
 		},
 		{
+			name = "Git: Show diff",
+			func = function()
+				vim.cmd("Gitsigns diffthis")
+			end
+		},
+		{
+			name = "Git: Stage this file",
+			func = function()
+				vim.cmd("Gitsigns stage_buffer")
+			end
+		},
+		{
 			name = "LSP: Show symbols",
 			func = function()
 				require("telescope.builtin").lsp_document_symbols({ symbol_width = 50 })
