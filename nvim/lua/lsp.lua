@@ -2,20 +2,6 @@
 local M = {}
 
 function M.setup()
--- Перехватчик для textDocument/publishDiagnostics
-vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
-	vim.lsp.diagnostic.on_publish_diagnostics, {
-		virtual_text = {
-			prefix = '●',
-		},
-		signs = true,
-		update_in_insert = true,
-		severity_sort = true,
-	}
-)
-
-
-
 -- Включение LSP серверов
 vim.lsp.enable({ 
 	'gopls',
@@ -23,7 +9,7 @@ vim.lsp.enable({
 	'vtsls',
 	'ra'
 })
-vim.lsp.set_log_level("debug")
+vim.lsp.log.set_level("debug")
 
 -- Настройка диагностики (показ всех уровней)
 vim.diagnostic.config({
@@ -33,8 +19,6 @@ vim.diagnostic.config({
 	update_in_insert = true,
 	severity_sort = true,
 })
-
-
 
 vim.opt.completeopt = { 'menuone', 'noselect', 'noinsert' }
 -- Автоматическое включение автодополнения для LSP
@@ -79,6 +63,24 @@ vim.api.nvim_create_autocmd("BufWritePre", {
   pattern = "*",
   callback = function(args)
     vim.lsp.buf.format({ async = false })  -- синхронное форматирование
+  end,
+})
+
+-- goimports для Go файлов
+vim.api.nvim_create_autocmd("BufWritePre", {
+  pattern = "*.go",
+  callback = function()
+    local original_content = vim.api.nvim_buf_get_lines(0, 0, -1, false)
+    local cursor_pos = vim.api.nvim_win_get_cursor(0)
+
+    local formatted = vim.fn.systemlist('goimports', original_content)
+    
+    if vim.v.shell_error == 0 then
+      vim.api.nvim_buf_set_lines(0, 0, -1, false, formatted)
+      vim.api.nvim_win_set_cursor(0, cursor_pos)
+    else
+      vim.notify("goimports failed: " .. table.concat(formatted, "\n"), vim.log.levels.ERROR)
+    end
   end,
 })
 

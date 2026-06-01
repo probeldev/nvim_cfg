@@ -1,9 +1,7 @@
-vim.lsp.config("ra", {
-	cmd = { "rust-analyzer" },
+return {
+  cmd = { "rust-analyzer" },
   filetypes = { 'rust' },
-	settings = {
-		["rust-analyzer"] = { },
-	},
-})
-
-
+  settings = {
+    ["rust-analyzer"] = { },
+  },
+}

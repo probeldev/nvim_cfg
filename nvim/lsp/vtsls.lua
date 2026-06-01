@@ -1,10 +1,10 @@
-vim.lsp.config.vtsls = {
-  cmd = { "vtsls", "--stdio" }, -- Команда для запуска сервера
-  filetypes = { "javascript", "javascriptreact", "typescript", "typescriptreact" }, -- Поддерживаемые типы файлов
-  root_markers = { "package.json", "tsconfig.json", "jsconfig.json", ".git" }, -- Файлы/папки, определяющие корень проекта
-  settings = { -- Настройки, передаваемые серверу
+return {
+  cmd = { "vtsls", "--stdio" },
+  filetypes = { "javascript", "javascriptreact", "typescript", "typescriptreact" },
+  root_markers = { "package.json", "tsconfig.json", "jsconfig.json", "tsconfig.json", ".git" },
+  settings = {
     typescript = {
-      tsdk = vim.fn.expand("~/.nvm/versions/node/v20.17.0/lib/node_modules/typescript/lib"), -- Путь к TypeScript SDK (указать свой путь, если требуется)
+      tsdk = vim.fn.expand("~/.nvm/versions/node/v20.17.0/lib/node_modules/typescript/lib"),
     },
   },
 }
