@@ -30,43 +30,29 @@ vim.treesitter.start = function() end
 -- Добавляем ~/.config/nvim/ в package.path
 package.path = package.path .. ";" .. vim.fn.stdpath("config") .. "/?.lua"
 
--- Инициализация менеджера плагинов (vim-plug)
-local Plug = vim.fn['plug#begin']()
-vim.fn['plug#']('nvim-tree/nvim-tree.lua')
-vim.fn['plug#']('nvim-lua/plenary.nvim')
-vim.fn['plug#']('nvim-tree/nvim-web-devicons')
-vim.fn['plug#']('MunifTanjim/nui.nvim')
-vim.fn['plug#']('lewis6991/gitsigns.nvim')
-vim.fn['plug#']('romgrk/barbar.nvim')
--- vim.fn['plug#']('ryanoasis/vim-devicons')
-vim.fn['plug#']('nvim-telescope/telescope.nvim', { ['tag'] = '0.1.6' })
-vim.fn['plug#']('tomtom/tcomment_vim')
-vim.fn['plug#']('akinsho/toggleterm.nvim', { ['tag'] = '*' })
-vim.fn['plug#']('projekt0n/github-nvim-theme')
-vim.fn['plug#']('dstein64/nvim-scrollview')
-
-
-
-
-vim.fn['plug#']('utilyre/barbecue.nvim')
-vim.fn['plug#']('SmiteshP/nvim-navic')
-
-
-vim.fn['plug#']('sontungexpt/stcursorword')
-vim.fn['plug#']('karb94/neoscroll.nvim')
-
-
-vim.fn['plug#']('MeanderingProgrammer/render-markdown.nvim')
-vim.fn['plug#']('dhruvasagar/vim-table-mode')
-
-vim.fn['plug#']('David-Kunz/gen.nvim')
-
-
-
-vim.fn['plug#']('folke/snacks.nvim') -- for opencode
-vim.fn['plug#']('nickjvandyke/opencode.nvim')
-
-vim.fn['plug#end']()
+-- Установка плагинов через встроенный пакетный менеджер Neovim 0.12
+vim.pack.add({
+  'https://github.com/nvim-tree/nvim-tree.lua',
+  'https://github.com/nvim-lua/plenary.nvim',
+  'https://github.com/nvim-tree/nvim-web-devicons',
+  'https://github.com/MunifTanjim/nui.nvim',
+  'https://github.com/lewis6991/gitsigns.nvim',
+  'https://github.com/romgrk/barbar.nvim',
+  { src = 'https://github.com/nvim-telescope/telescope.nvim' },
+  'https://github.com/tomtom/tcomment_vim',
+  { src = 'https://github.com/akinsho/toggleterm.nvim', version = vim.version.range('*') },
+  'https://github.com/projekt0n/github-nvim-theme',
+  'https://github.com/dstein64/nvim-scrollview',
+  'https://github.com/utilyre/barbecue.nvim',
+  'https://github.com/SmiteshP/nvim-navic',
+  'https://github.com/sontungexpt/stcursorword',
+  'https://github.com/karb94/neoscroll.nvim',
+  'https://github.com/MeanderingProgrammer/render-markdown.nvim',
+  'https://github.com/dhruvasagar/vim-table-mode',
+  'https://github.com/David-Kunz/gen.nvim',
+  'https://github.com/folke/snacks.nvim',
+  'https://github.com/nickjvandyke/opencode.nvim',
+})
 
 
 -- Цветовая схема
