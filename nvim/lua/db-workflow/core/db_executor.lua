@@ -72,6 +72,9 @@ function M.build_mysql_command()
         table.insert(parts, db_config.dbname)
     end
 
+    -- Устанавливаем кодировку UTF-8 для корректного вывода
+    table.insert(parts, "--default-character-set=utf8mb4")
+
     return table.concat(parts, " ")
 end
 
