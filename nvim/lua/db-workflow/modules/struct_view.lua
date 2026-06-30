@@ -31,9 +31,16 @@ function M.get_available_actions()
     local db_config = require("db-workflow.core.config_loader").load_config()
     local sql_query = "SHOW TABLES"
     
-    local success, output = pcall(db_executor.execute_query, sql_query, { raw = true })
-    if not success or not output then
-        utils.error("Ошибка получения списка таблиц: " .. tostring(output))
+    local success, output, err = pcall(function()
+        local out, e = db_executor.execute_query(sql_query, { raw = true })
+        return out, e
+    end)
+    if not success then
+        utils.error("Ошибка получения списка таблиц (pcall): " .. tostring(output))
+        return {}
+    end
+    if not output then
+        utils.error("Ошибка получения списка таблиц: " .. tostring(err))
         return {}
     end
     

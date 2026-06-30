@@ -10,7 +10,10 @@ local default_config = {
     dbport = "3306",
     dbuser = "root",
     dbpassword = "",
-    dbname = "test"
+    dbname = "test",
+    -- Пример кастомной команды (например, docker exec):
+    -- command = "docker exec -i my-mysql mysql -hlocalhost -uroot -psecret mydb -e {query}"
+    command = nil
 }
 
 -- Поиск конфигурационного файла в дереве директорий
@@ -125,7 +128,8 @@ function M.create_template_config()
         '  "dbport": "3306",',
         '  "dbuser": "root",',
         '  "dbpassword": "your_password",',
-        '  "dbname": "your_database"',
+        '  "dbname": "your_database",',
+        '  "command": "docker exec -it mysql mysql"',
         "}"
     }
     
