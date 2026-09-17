@@ -44,7 +44,6 @@ function M.load_config()
     local config_path = M.find_config_file()
     
     if not config_path then
-        vim.notify("📝 Конфигурационный файл " .. CONFIG_FILE_NAME .. " не найден. Используются настройки по умолчанию.", vim.log.levels.INFO)
         return default_config
     end
     
@@ -64,8 +63,7 @@ function M.load_config()
     
     -- Объединяем с настройками по умолчанию
     local merged_config = vim.tbl_deep_extend("force", {}, default_config, config_data)
-    
-    vim.notify("✅ Загружена конфигурация из: " .. config_path, vim.log.levels.INFO)
+
     return merged_config
 end
 
@@ -135,7 +133,6 @@ function M.create_template_config()
     
     local success = pcall(vim.fn.writefile, template, config_path)
     if success then
-        vim.notify("✅ Создан шаблон конфигурационного файла: " .. config_path, vim.log.levels.INFO)
         return true
     else
         vim.notify("❌ Не удалось создать конфигурационный файл: " .. config_path, vim.log.levels.ERROR)

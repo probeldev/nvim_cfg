@@ -39,7 +39,12 @@ function M.split_lines(text)
 end
 
 function M.notify(message, level)
-    vim.notify(message, level or vim.log.levels.INFO)
+    level = level or vim.log.levels.INFO
+    -- Показываем только предупреждения и ошибки, информационные логи отключаем
+    if level < vim.log.levels.WARN then
+        return
+    end
+    vim.notify(message, level)
 end
 
 function M.warn(message)

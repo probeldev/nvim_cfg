@@ -129,9 +129,6 @@ function M.execute_query(sql_query, options)
 
     local full_command = mysql_cmd .. format_flags .. " -e " .. vim.fn.shellescape(sql_query)
 
-    -- DEBUG
-    vim.notify("DBWorkflow command: " .. full_command, vim.log.levels.WARN)
-
     local output = vim.fn.system(full_command)
 
     if vim.v.shell_error ~= 0 then
